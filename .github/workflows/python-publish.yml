@@ -1,9 +1,13 @@
-name: Publish to PyPI
+name: Publish Python package to PyPI
 
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "python-v*.*.*"
+
+defaults:
+  run:
+    working-directory: python
 
 jobs:
   publish:
@@ -19,3 +23,5 @@ jobs:
       - run: pip install build
       - run: python -m build
       - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist
