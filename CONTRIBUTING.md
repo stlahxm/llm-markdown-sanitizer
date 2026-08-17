@@ -1,18 +1,19 @@
 # Contributing
 
-Thanks for considering a contribution. This is a small, single-purpose library, so the bar is intentionally low-friction:
+This is a small, single-purpose library, so I'm trying to keep the bar low here:
 
-## Before you start
+## Before you dive in
 
-- For a bug fix or small improvement, just open a PR directly — no need to file an issue first.
-- For anything that changes the public API (`clean_markdown`'s signature, return type, or default behavior), please open an issue first so we can agree on the approach before you write code.
-- Check open issues/PRs first to avoid duplicate work.
+- Bug fix or small improvement? Just open a PR, no need to file an issue first.
+- Changing the public API (`clean_markdown`'s signature, return type, or default behavior)? Open an issue first so we can talk it through before you write code — I'd rather agree on the approach up front than ask you to redo a PR.
+- Worth a quick search of open issues/PRs first, in case someone's already on it.
 
-## Project principles
+## The two rules that actually matter
 
-- **Zero runtime dependencies.** This library only uses the Python standard library (`re`). Please don't add a dependency without discussing it in an issue first — it's a hard constraint, not a preference.
-- **Pure functions.** No I/O, no global state, no side effects. `clean_markdown(text) -> str` and its internal helpers should stay easy to reason about and test in isolation.
-- Keep diffs focused — one fix/feature per PR.
+1. **Zero runtime dependencies.** Stdlib only. If you're tempted to reach for a package to solve something, that's usually a sign the problem needs a smaller solution, not a bigger one — ping me in an issue if you genuinely think an exception is warranted.
+2. **Pure functions.** No I/O, no global state, no side effects. Everything here should be testable by calling it with a string and checking what comes back.
+
+Beyond that — keep PRs focused on one thing. A drive-by reformat mixed into a bug fix makes the diff annoying to review.
 
 ## Setup
 
@@ -26,12 +27,12 @@ pytest -v
 
 ## Submitting a PR
 
-- [ ] Add a test that fails before your change and passes after it (see `tests/test_core.py` for the style — small, focused, one behavior per test).
-- [ ] `pytest -v` passes locally.
-- [ ] Briefly describe the markdown input that was breaking, and why, in the PR description.
+- Add a test that fails before your change and passes after (look at `tests/` for the style — small, one behavior per test, real input/output).
+- `pytest -v` passes.
+- Say what markdown input was breaking and why, in the PR description. A concrete "here's the input, here's what it produced, here's what I expected" beats a long explanation.
 
-That's it — no DCO/CLA sign-off required. By opening a PR you agree your contribution is licensed under this project's MIT license.
+No DCO/CLA sign-off — opening a PR here means you're fine with it being under this project's MIT license, same as everything else in the repo.
 
 ## Reporting a bug
 
-Include: the input string that produces the wrong output, what you expected, and what you got instead. A minimal repro is worth more than a long description.
+Give me the exact input string, what you expected, and what you actually got. A minimal repro saves both of us time.

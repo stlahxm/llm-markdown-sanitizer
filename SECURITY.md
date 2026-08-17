@@ -1,7 +1,7 @@
 # Security Policy
 
-This library is a pure text-processing function with zero runtime dependencies and no I/O, network access, or code execution — the attack surface is intentionally minimal (regex-based string transforms only).
+This library is a pure text-in, text-out function with zero runtime dependencies — no I/O, no network calls, no code execution. The attack surface here is about as small as it gets (it's regex-based string transforms, that's it).
 
-If you still find a security-relevant issue (e.g. a regex that's vulnerable to catastrophic backtracking / ReDoS on adversarial input), please report it privately via a GitHub security advisory ("Report a vulnerability" under the Security tab) rather than a public issue, so a fix can go out before the details are public.
+That said, if you find something — say a regex that goes exponential on some adversarial input (ReDoS) — please report it privately through GitHub's "Report a vulnerability" under the Security tab instead of a public issue, so there's time to fix it before it's public.
 
-We'll acknowledge reports within a few days on a best-effort basis (solo-maintained project).
+I'll get back to you within a few days, best effort — this is a solo-maintained project.
