@@ -1,19 +1,19 @@
 # Contributing
 
-This is a small, single-purpose library, so I'm trying to keep the bar low here:
+This is a small, single-purpose library, so the process here is intentionally lightweight.
 
-## Before you dive in
+## Before you start
 
-- Bug fix or small improvement? Just open a PR, no need to file an issue first.
-- Changing the public API (`clean_markdown`'s signature, return type, or default behavior)? Open an issue first so we can talk it through before you write code — I'd rather agree on the approach up front than ask you to redo a PR.
-- Worth a quick search of open issues/PRs first, in case someone's already on it.
+- For a bug fix or small improvement, open a PR directly — no need to file an issue first.
+- For anything that changes the public API (`clean_markdown`'s signature, return type, or default behavior), please open an issue first so the approach can be agreed on before implementation.
+- Check open issues/PRs first to avoid duplicate work.
 
-## The two rules that actually matter
+## Project constraints
 
-1. **Zero runtime dependencies.** Stdlib only. If you're tempted to reach for a package to solve something, that's usually a sign the problem needs a smaller solution, not a bigger one — ping me in an issue if you genuinely think an exception is warranted.
-2. **Pure functions.** No I/O, no global state, no side effects. Everything here should be testable by calling it with a string and checking what comes back.
+1. **Zero runtime dependencies.** Standard library only. Please don't introduce a dependency to solve a problem — if you think one is genuinely needed, raise it in an issue first.
+2. **Pure functions.** No I/O, no global state, no side effects. Every function should be testable with a string in, string out.
 
-Beyond that — keep PRs focused on one thing. A drive-by reformat mixed into a bug fix makes the diff annoying to review.
+Beyond that, keep PRs focused on a single change — mixing a reformat into a bug fix makes the diff harder to review.
 
 ## Setup
 
@@ -27,12 +27,12 @@ pytest -v
 
 ## Submitting a PR
 
-- Add a test that fails before your change and passes after (look at `tests/` for the style — small, one behavior per test, real input/output).
-- `pytest -v` passes.
-- Say what markdown input was breaking and why, in the PR description. A concrete "here's the input, here's what it produced, here's what I expected" beats a long explanation.
+- Add a test that fails before your change and passes after it (see `tests/` for the existing style).
+- Confirm `pytest -v` passes locally.
+- Describe the markdown input that was breaking and why, in the PR description.
 
-No DCO/CLA sign-off — opening a PR here means you're fine with it being under this project's MIT license, same as everything else in the repo.
+No DCO/CLA sign-off is required. By opening a PR, you agree your contribution is licensed under this project's MIT license.
 
 ## Reporting a bug
 
-Give me the exact input string, what you expected, and what you actually got. A minimal repro saves both of us time.
+Include the input string, the expected output, and the actual output. A minimal reproduction is more useful than a long description.

@@ -1,9 +1,9 @@
 # Code of Conduct
 
-Keep it simple: be respectful, assume good faith, and keep the conversation about the code, not the person.
+The expectation is simple: be respectful, assume good faith, and keep discussion focused on the technical merits of an issue or PR.
 
-Harassment, personal attacks, or discriminatory language aren't welcome here — that kind of comment gets removed, and repeat offenders get blocked from the repo.
+Harassment, personal attacks, and discriminatory language are not acceptable. Comments that cross this line may be removed, and repeat offenders may be blocked from the repository.
 
-If something happens in an issue or PR that crosses a line, open an issue or reach out to me directly. I'll handle it quietly.
+If you experience or witness unacceptable behavior in this project's spaces, please open an issue or contact the maintainer directly. Reports will be handled discreetly.
 
-This is the short version of the [Contributor Covenant](https://www.contributor-covenant.org/)'s spirit — if this project ever grows a real community around it, I'll adopt the full thing.
+This is a short, informal version of the [Contributor Covenant](https://www.contributor-covenant.org/) — the full version would be adopted if this project grows a larger contributor base.

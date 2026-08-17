@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: clean_markdown() gave you the wrong thing
+about: clean_markdown() produced incorrect output
 labels: bug
 ---
 
@@ -9,14 +9,14 @@ labels: bug
 <the exact markdown string you passed in>
 ```
 
-**Expected**
+**Expected output**
 ```
-<what you expected back>
-```
-
-**Actual**
-```
-<what you actually got>
+<what you expected clean_markdown() to return>
 ```
 
-**Version**: `llm-markdown-sanitizer` version + Python version
+**Actual output**
+```
+<what it actually returned>
+```
+
+**Version**: `llm-markdown-sanitizer` version and Python version

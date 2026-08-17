@@ -1,29 +1,29 @@
 # Agent instructions
 
-For any AI coding agent working in this repo (Claude Code, Codex, Cursor, Amp, Jules, whatever). Same rules as [CONTRIBUTING.md](CONTRIBUTING.md), just phrased for you instead of a human.
+Applies to any AI coding agent working in this repo (Claude Code, Codex, Cursor, Amp, Jules, etc.). Same rules as [CONTRIBUTING.md](CONTRIBUTING.md), phrased for an agent rather than a human contributor.
 
-## What you're looking at
+## Project scope
 
-A single-purpose library: `clean_markdown(text) -> str` fixes markdown that LLMs tend to mangle. That's the whole project. If a change doesn't relate to "an LLM produced broken markdown," it probably doesn't belong here — resist the urge to grow scope.
+A single-purpose library: `clean_markdown(text) -> str` fixes markdown that LLMs commonly generate incorrectly. If a change doesn't relate to that, it likely doesn't belong here — avoid expanding scope.
 
-## Don't break these without asking first
+## Constraints
 
-1. **Zero runtime dependencies.** Stdlib only (`re`, `itertools`). Don't reach for a package — figure it out with what's already here.
-2. **Pure functions.** No I/O, no global mutable state, no side effects. Everything should be testable with a plain string in, string out.
-3. **`clean_markdown` is the only public thing.** The `_`-prefixed modules are internal. Don't add new public exports on your own.
+1. **Zero runtime dependencies.** Standard library only (`re`, `itertools`). Do not add a dependency without prior discussion.
+2. **Pure functions.** No I/O, no global mutable state, no side effects. Every function should be testable with a string in, string out.
+3. **`clean_markdown` is the only public export.** The `_`-prefixed modules are internal; do not add new public exports without discussion.
 
-## A bug that's easy to reintroduce
+## A bug class to watch for
 
-`_protect.py`'s placeholder mechanism gives every call its own numeric namespace (`MDSAN{call_id}_{n}`) on purpose. An earlier version shared one namespace across all calls, and a nested call (emphasis normalization protecting math spans, running inside an outer user-supplied `protect_patterns` call) ended up deleting the outer call's protected text because it thought the placeholder was its own. It didn't crash — it just silently dropped text, which is the worst kind of bug to catch. If you touch `_protect.py`, run the full suite before and after.
+`_protect.py`'s placeholder mechanism gives every call its own numeric namespace (`MDSAN{call_id}_{n}`) deliberately. An earlier version used a single shared namespace, and a nested call (emphasis normalization protecting math spans, running inside an outer `protect_patterns` call) collided with and silently deleted the outer call's protected text — no crash, just dropped content. If `_protect.py` is modified, run the full test suite before and after.
 
-Similar story with `_lists.py`: `normalize_list_line()` must run exactly once per line. It used to run twice (once before table-expansion, once after) and got away with it because the old indent-scale math happened to be a fixed point — running it twice didn't change the output. That's no longer true. If you're touching the list/table interaction in `_core.py`, be careful not to reintroduce a double call.
+Similarly, in `_lists.py`: `normalize_list_line()` must run exactly once per line. It previously ran twice inside `_clean_lines()` (once before table expansion, once after) without visible effect, because the old indent-scale formula happened to be a fixed point. That is no longer true after the formula was corrected — reintroducing a duplicate call would double indentation on every pass.
 
-## Before you're done
+## Before submitting a change
 
 ```bash
 pip install -e ".[dev]"
 pytest -v
 ```
 
-- Add a test that fails before your change, passes after. Look at existing tests for the style.
-- If the fix came from a real LLM output that broke, use an anonymized version of that actual input as the test case instead of making one up — the test suite here is meant to encode real observed failures, not just hypothetical edge cases.
+- Add a test that fails before the change and passes after it.
+- If the fix originates from a real LLM output that broke, use an anonymized version of that input as the test case rather than a synthetic one — the test suite is meant to encode observed failure modes.

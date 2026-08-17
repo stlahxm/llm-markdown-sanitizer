@@ -1,13 +1,13 @@
-## What's this fixing/adding?
+## What does this fix/add?
 
-<!-- a sentence or two is fine -->
+<!-- one or two sentences -->
 
 ## Before / after
 
-<!-- the markdown input that was broken, and what clean_markdown() gives you before vs after this change -->
+<!-- markdown input that was broken, and what clean_markdown() produces before vs after this change -->
 
 ## Checklist
 
-- [ ] added a test for this
-- [ ] `pytest -v` passes
-- [ ] no new runtime dependency (or if it's genuinely needed, there's a linked issue discussing it)
+- [ ] Added a test covering this change
+- [ ] `pytest -v` passes locally
+- [ ] No new runtime dependency added (or, if genuinely needed, discussed in a linked issue first)
