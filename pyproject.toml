@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-markdown-sanitizer"
+version = "0.1.0"
+description = "Fix broken markdown that LLMs generate — tables, lists, emphasis, code fences. Zero dependencies, one function."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Halu" }
+]
+keywords = ["markdown", "llm", "sanitizer", "rag", "text-processing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+
+[project.urls]
+Homepage = "https://github.com/stlahxm/llm-markdown-sanitizer"
+Issues = "https://github.com/stlahxm/llm-markdown-sanitizer/issues"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llm_markdown_sanitizer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
