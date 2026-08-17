@@ -6,10 +6,13 @@ A Python binding with the same behavior is also available — see the [repositor
 
 ## Install
 
-Via [JitPack](https://jitpack.io/#stlahxm/llm-markdown-sanitizer) (Gradle):
+Requires Java 17+. Distributed via [JitPack](https://jitpack.io/#stlahxm/llm-markdown-sanitizer) — no Maven Central publishing step involved, JitPack builds straight from the GitHub tag the first time anyone requests that version (can take a minute on the very first request for a given version, instant after that).
+
+Gradle (Kotlin DSL, `build.gradle.kts`):
 
 ```kotlin
 repositories {
+    mavenCentral()
     maven { url = uri("https://jitpack.io") }
 }
 
@@ -18,22 +21,47 @@ dependencies {
 }
 ```
 
-Maven:
+Gradle (Groovy DSL, `build.gradle`):
+
+```groovy
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.0'
+}
+```
+
+Maven (`pom.xml`):
 
 ```xml
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
 
-<dependency>
-    <groupId>com.github.stlahxm</groupId>
-    <artifactId>llm-markdown-sanitizer</artifactId>
-    <version>java-v0.1.0</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>com.github.stlahxm</groupId>
+        <artifactId>llm-markdown-sanitizer</artifactId>
+        <version>java-v0.1.0</version>
+    </dependency>
+</dependencies>
+```
+
+Verify it resolved correctly:
+
+```bash
+./gradlew dependencies --configuration compileClasspath | grep llm-markdown-sanitizer
 ```
 
 ## Use
+
+The whole API is one static method:
 
 ```java
 import io.github.stlahxm.markdownsanitizer.MarkdownSanitizer;
@@ -44,6 +72,31 @@ MarkdownSanitizer.clean("**Note**this needs a space");
 MarkdownSanitizer.clean("| A | B | | --- | --- | | 1 | 2 |");
 // "| A | B |\n| --- | --- |\n| 1 | 2 |"
 ```
+
+### In a Spring Boot controller
+
+The intended use case: a backend stores LLM-generated markdown (from a batch job, a separate AI service, wherever), and cleans it right before handing it to the frontend — rather than making every frontend independently work around inconsistent LLM formatting.
+
+```java
+@RestController
+@RequestMapping("/api/lectures")
+public class LectureSummaryController {
+
+    private final LectureSummaryRepository repository;
+
+    public LectureSummaryController(LectureSummaryRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<String> getSummary(@PathVariable Long id) {
+        String rawMarkdown = repository.findAiSummaryById(id); // stored LLM output
+        return ResponseEntity.ok(MarkdownSanitizer.clean(rawMarkdown));
+    }
+}
+```
+
+Since `MarkdownSanitizer.clean()` is a stateless static method with no I/O, it's safe to call directly wherever the response is being assembled — no bean, no configuration, nothing to wire up.
 
 ## Why this exists
 

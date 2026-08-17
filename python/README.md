@@ -6,11 +6,36 @@ A Java binding with the same behavior is also available — see the [repository 
 
 ## Install
 
+Requires Python 3.9+. No other dependencies get pulled in.
+
 ```bash
 pip install llm-markdown-sanitizer
 ```
 
+Using a virtual environment (recommended for any real project):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install llm-markdown-sanitizer
+```
+
+Pin a specific version if you want reproducible builds:
+
+```bash
+pip install "llm-markdown-sanitizer==0.1.0"
+```
+
+Verify it installed correctly:
+
+```bash
+python -c "from llm_markdown_sanitizer import clean_markdown; print(clean_markdown('**hi**there'))"
+# **hi** there
+```
+
 ## Use
+
+The whole API is one function:
 
 ```python
 from llm_markdown_sanitizer import clean_markdown
@@ -23,6 +48,32 @@ clean_markdown("| A | B | | --- | --- | | 1 | 2 |")
 ```
 
 Default settings handle the common failure modes without additional configuration.
+
+### In a FastAPI endpoint
+
+A typical place to call this is right before a stored or freshly-generated LLM response goes out to a client:
+
+```python
+from fastapi import FastAPI
+from llm_markdown_sanitizer import clean_markdown
+
+app = FastAPI()
+
+@app.get("/lectures/{lecture_id}/summary")
+def get_summary(lecture_id: int):
+    raw = db.get_ai_summary(lecture_id)  # however you fetch/generate it
+    return {"summary": clean_markdown(raw)}
+```
+
+### Streaming/multi-part LLM responses
+
+Some SDKs return responses as a list of `{"text": ...}`-shaped chunks instead of one string. `clean_markdown` accepts that directly:
+
+```python
+chunks = [{"text": "# Hello"}, {"text": "\n\nWorld"}]
+clean_markdown(chunks)
+# "# Hello\n\nWorld"
+```
 
 ## Why this exists
 
