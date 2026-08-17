@@ -44,11 +44,16 @@ def _convert_br_tags_outside_tables(line: str) -> str:
 
 
 def _clean_lines(text: str) -> str:
+    # normalize_list_line() must run exactly once per output line. It used to
+    # also run once before expand_compact_table_line() as well as once after,
+    # which was silently safe under the old (buggy) indent-scale formula
+    # because that formula happened to be a fixed point at 4 spaces — but
+    # became a real bug (indentation doubling on every pass) once the scale
+    # was fixed to be consistently 2-spaces-per-level. See issue #1.
     cleaned_lines: list[str] = []
     for line in text.splitlines():
         line = _convert_br_tags_outside_tables(line)
         line = normalize_emphasis_boundaries(line)
-        line = normalize_list_line(line, cleaned_lines[-1] if cleaned_lines else "")
         for expanded_line in expand_compact_table_line(line):
             normalized = normalize_list_line(expanded_line, cleaned_lines[-1] if cleaned_lines else "")
             cleaned_lines.append(normalized)

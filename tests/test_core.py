@@ -49,13 +49,16 @@ def test_math_span_is_not_touched_by_emphasis_normalizer():
     assert clean_markdown(text) == text
 
 
-def test_list_indentation_is_normalized_to_four_spaces_per_level():
-    text = "- top level\n  - nested with two spaces\n    - nested with four spaces"
+def test_single_level_list_indentation_is_normalized_to_four_spaces():
+    text = "- top level\n  - one nested item"
     result = clean_markdown(text)
     lines = result.splitlines()
     assert lines[0] == "- top level"
-    assert lines[1] == "    - nested with two spaces"
-    assert lines[2] == "    - nested with four spaces"
+    assert lines[1] == "    - one nested item"
+
+
+# Multi-level nesting (2-space vs 4-space input both staying distinct in the
+# output) is covered by tests/test_integration.py::test_nested_list_levels_stay_distinct
 
 
 def test_compact_single_line_table_is_expanded():

@@ -39,6 +39,7 @@ Ask an LLM to answer in markdown and you'll eventually get: a whole answer wrapp
 | Collapsed table | `\| A \| B \| \| --- \| --- \| \| 1 \| 2 \|` | proper one-row-per-line table |
 | Broken table (no separator / mismatched columns) | renders as a wall of `\|` | dropped instead of rendered broken |
 
+
 ## Protecting your own syntax
 
 If your prompts produce custom tokens (your own `[[wiki]]`-style syntax, template placeholders, etc.) that the cleanup passes above might mangle, pass them in and they're left completely untouched:
