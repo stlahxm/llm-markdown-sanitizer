@@ -55,7 +55,7 @@ Extracted from the markdown-cleanup layer of a production RAG service, after mon
 
 ## Contributing
 
-Bug fixes and small improvements are welcome — no CLA/DCO, just open a PR. See [CONTRIBUTING.md](CONTRIBUTING.md) for the (short) guidelines and how to run the test suite locally.
+Bug fixes and small improvements are welcome — no CLA/DCO, just open a PR. See [CONTRIBUTING.md](CONTRIBUTING.md) for the (short) guidelines and how to run the test suite locally. If you're using an AI coding agent, it should already pick up [AGENTS.md](AGENTS.md) / [CLAUDE.md](CLAUDE.md) automatically.
 
 ## License
 
