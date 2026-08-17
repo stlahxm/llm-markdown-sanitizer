@@ -33,7 +33,12 @@ public final class MarkdownSanitizer {
     private MarkdownSanitizer() {
     }
 
-    /** Equivalent to {@link #clean(String, List)} with no protected patterns. */
+    /**
+     * Equivalent to {@link #clean(String, List)} with no protected patterns.
+     *
+     * @param text the raw LLM output. {@code null} or empty returns {@code ""}.
+     * @return the cleaned markdown
+     */
     public static String clean(String text) {
         return clean(text, List.of());
     }
@@ -44,6 +49,7 @@ public final class MarkdownSanitizer {
      *                        untouched by the cleanup passes -- use this to protect
      *                        your own domain-specific syntax (custom tokens, template
      *                        placeholders, etc.) that might otherwise get mangled.
+     * @return the cleaned markdown
      */
     public static String clean(String text, List<Pattern> protectPatterns) {
         if (text == null || text.isEmpty()) {
