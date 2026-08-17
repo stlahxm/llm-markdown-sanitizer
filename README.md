@@ -1,6 +1,21 @@
 # llm-markdown-sanitizer
 
+[![Python CI](https://img.shields.io/github/actions/workflow/status/stlahxm/llm-markdown-sanitizer/python-ci.yml?branch=main&label=python)](.github/workflows/python-ci.yml)
+[![Java CI](https://img.shields.io/github/actions/workflow/status/stlahxm/llm-markdown-sanitizer/java-ci.yml?branch=main&label=java)](.github/workflows/java-ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/llm-markdown-sanitizer?label=pypi)](https://pypi.org/project/llm-markdown-sanitizer/)
+[![JitPack](https://img.shields.io/github/v/tag/stlahxm/llm-markdown-sanitizer?filter=java-v*&label=jitpack)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+![Zero dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)
+![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
+![Java 17+](https://img.shields.io/badge/java-17%2B-orange)
+
 Fix broken markdown that LLMs generate — tables, lists, emphasis, code fences. Zero dependencies, one function/method.
+
+- **Two language bindings, one behavior** — Python and Java share the same logic and the same test fixtures.
+- **Unicode-aware by construction** — the emphasis-spacing fix relies on `isalnum()`/`isLetterOrDigit()`, so Korean, CJK, and accented Latin text (café, 한글, 中文) are handled the same as plain ASCII with no per-language code path. Emoji and symbols are correctly left alone.
+- **No configuration** — call one function, get cleaned markdown back.
+
+**Contents:** [Before/after](#before--after) · [Python install](python/#install) · [Java install](java/#install) · [Supported syntax](#supported-syntax-and-exact-behavior) · [Contributing](#contributing)
 
 ## Before / after
 
