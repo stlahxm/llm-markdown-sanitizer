@@ -53,6 +53,10 @@ clean_markdown(text, protect_patterns=[re.compile(r"\[\[.*?\]\]")])
 
 Extracted from the markdown-cleanup layer of a production RAG service, after months of hardening against real LLM output. The domain-specific bits (a custom wiki syntax, a Korean-language note pattern) were stripped out in favor of the general `protect_patterns` mechanism above, which anyone can use for their own domain syntax.
 
+## Contributing
+
+Bug fixes and small improvements are welcome — no CLA/DCO, just open a PR. See [CONTRIBUTING.md](CONTRIBUTING.md) for the (short) guidelines and how to run the test suite locally.
+
 ## License
 
 MIT
