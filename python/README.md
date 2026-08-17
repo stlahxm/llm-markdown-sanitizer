@@ -1,8 +1,14 @@
 # llm-markdown-sanitizer (Python)
 
+[![PyPI](https://img.shields.io/pypi/v/llm-markdown-sanitizer)](https://pypi.org/project/llm-markdown-sanitizer/)
+[![Python versions](https://img.shields.io/pypi/pyversions/llm-markdown-sanitizer)](https://pypi.org/project/llm-markdown-sanitizer/)
+[![Downloads](https://img.shields.io/pypi/dm/llm-markdown-sanitizer)](https://pypi.org/project/llm-markdown-sanitizer/)
+[![CI](https://img.shields.io/github/actions/workflow/status/stlahxm/llm-markdown-sanitizer/python-ci.yml?branch=main)](https://github.com/stlahxm/llm-markdown-sanitizer/actions/workflows/python-ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/LICENSE)
+
 Fix broken markdown that LLMs generate. Zero dependencies, one function.
 
-A Java binding with the same behavior is also available — see the [repository root](..) for both.
+A Java binding with the same behavior is also available — see the [repository root](https://github.com/stlahxm/llm-markdown-sanitizer) for both.
 
 ## Install
 
@@ -108,7 +114,7 @@ Extracted from the markdown-cleanup layer of a production RAG service, after mon
 
 ## Contributing
 
-Bug fixes and small improvements are welcome. No CLA/DCO required — see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and how to run the test suite locally. AI coding agents should pick up [AGENTS.md](AGENTS.md) / [CLAUDE.md](CLAUDE.md) automatically.
+Bug fixes and small improvements are welcome. No CLA/DCO required — see [CONTRIBUTING.md](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/CONTRIBUTING.md) for guidelines and how to run the test suite locally. AI coding agents should pick up [AGENTS.md](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/AGENTS.md) automatically.
 
 ## License
 
