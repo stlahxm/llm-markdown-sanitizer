@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.0")
+    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.1")
 }
 ```
 
@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.0'
+    implementation 'com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.1'
 }
 ```
 
@@ -48,7 +48,7 @@ Maven (`pom.xml`):
     <dependency>
         <groupId>com.github.stlahxm</groupId>
         <artifactId>llm-markdown-sanitizer</artifactId>
-        <version>java-v0.1.0</version>
+        <version>java-v0.1.1</version>
     </dependency>
 </dependencies>
 ```
@@ -126,7 +126,7 @@ MarkdownSanitizer.clean(text, List.of(Pattern.compile("\\[\\[.*?]]")));
 
 ```bash
 cd java
-gradle build
+./gradlew build
 ```
 
 ## Origin

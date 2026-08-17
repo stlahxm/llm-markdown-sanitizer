@@ -1,1 +1,1 @@
-rootProject.name = "llm-markdown-sanitizer-java"
+rootProject.name = "llm-markdown-sanitizer"
