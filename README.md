@@ -72,8 +72,8 @@ The broken second table (no separator row) is dropped entirely rather than rende
 
 Extracted from the markdown-cleanup layer of a production RAG service, after months of hardening against real LLM output. Available for both Python and Java, sharing the same behavior and test fixtures.
 
-- **[Python](python/)** — `pip install llm-markdown-sanitizer`
-- **[Java](java/)** — via JitPack (`com.github.stlahxm:llm-markdown-sanitizer:java-<version>`)
+- **[Python](python/)** — `pip install llm-markdown-sanitizer`, on PyPI at **https://pypi.org/project/llm-markdown-sanitizer/**
+- **[Java](java/)** — via JitPack (`com.github.stlahxm:llm-markdown-sanitizer:java-<version>`), browse versions at **https://jitpack.io/#stlahxm/llm-markdown-sanitizer**
 
 Each subdirectory has its own README with install/usage details specific to that language. The core logic — code fence stripping, `<br>` handling, emphasis boundary fixes, list indentation, table repair — is ported 1:1 between the two, including bug fixes (see [CONTRIBUTING.md](CONTRIBUTING.md) for how changes should be kept in sync across both).
 

@@ -12,10 +12,18 @@ A Java binding with the same behavior is also available — see the [repository 
 
 ## Install
 
+PyPI page: **https://pypi.org/project/llm-markdown-sanitizer/** (release history, file hashes, full metadata).
+
 Requires Python 3.9+. No other dependencies get pulled in.
 
 ```bash
 pip install llm-markdown-sanitizer
+```
+
+Using `uv` (if that's your workflow):
+
+```bash
+uv add llm-markdown-sanitizer
 ```
 
 Using a virtual environment (recommended for any real project):
@@ -26,10 +34,16 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install llm-markdown-sanitizer
 ```
 
-Pin a specific version if you want reproducible builds:
+Pin a specific version if you want reproducible builds — see the [PyPI release history](https://pypi.org/project/llm-markdown-sanitizer/#history) for available versions:
 
 ```bash
-pip install "llm-markdown-sanitizer==0.1.0"
+pip install "llm-markdown-sanitizer==0.1.5"
+```
+
+Add it to `requirements.txt` / `pyproject.toml` the normal way:
+
+```
+llm-markdown-sanitizer>=0.1.5
 ```
 
 Verify it installed correctly:

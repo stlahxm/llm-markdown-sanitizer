@@ -1,10 +1,16 @@
 # llm-markdown-sanitizer (Java)
 
+[![JitPack](https://jitpack.io/v/stlahxm/llm-markdown-sanitizer.svg)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
+[![CI](https://img.shields.io/github/actions/workflow/status/stlahxm/llm-markdown-sanitizer/java-ci.yml?branch=main)](https://github.com/stlahxm/llm-markdown-sanitizer/actions/workflows/java-ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/LICENSE)
+
 Fix broken markdown that LLMs generate. Zero runtime dependencies, one method.
 
-A Python binding with the same behavior is also available — see the [repository root](..) for both.
+A Python binding with the same behavior is also available — see the [repository root](https://github.com/stlahxm/llm-markdown-sanitizer) for both.
 
 ## Install
+
+JitPack page (browse all available versions): **https://jitpack.io/#stlahxm/llm-markdown-sanitizer**
 
 Requires Java 17+. Distributed via [JitPack](https://jitpack.io/#stlahxm/llm-markdown-sanitizer) — no Maven Central publishing step involved, JitPack builds straight from the GitHub tag the first time anyone requests that version (can take a minute on the very first request for a given version, instant after that).
 
@@ -17,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.4")
+    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.5")
 }
 ```
 
@@ -30,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.4'
+    implementation 'com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.5'
 }
 ```
 
@@ -48,7 +54,7 @@ Maven (`pom.xml`):
     <dependency>
         <groupId>com.github.stlahxm</groupId>
         <artifactId>llm-markdown-sanitizer</artifactId>
-        <version>java-v0.1.4</version>
+        <version>java-v0.1.5</version>
     </dependency>
 </dependencies>
 ```
