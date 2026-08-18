@@ -16,7 +16,7 @@ Fix broken markdown that LLMs generate — tables, lists, headings, emphasis, co
 - **Backed by real bug reports, not guesswork** — every fix traces back either to a bug found while testing this library against realistic documents, or to a documented, commonly-reported LLM markdown failure from developer communities and public issue trackers (linked per-feature below).
 - **No configuration** — call one function, get cleaned markdown back.
 
-**Contents:** [Before/after](#before--after) · [Python install](python/#install) · [Java install](java/#install) · [Supported syntax](#supported-syntax-and-exact-behavior) · [Contributing](#contributing)
+**Contents:** [Before/after](#before--after) · [Install & use](#install--use) · [Supported syntax](#supported-syntax-and-exact-behavior) · [Contributing](#contributing)
 
 ## Before / after
 
@@ -70,10 +70,52 @@ The broken second table (no separator row) is dropped entirely rather than rende
 
 Extracted from the markdown-cleanup layer of a production RAG service, after months of hardening against real LLM output. Available for both Python and Java, sharing the same behavior and test fixtures.
 
-- **[Python](python/)** — `pip install llm-markdown-sanitizer`, on PyPI at **https://pypi.org/project/llm-markdown-sanitizer/**
-- **[Java](java/)** — via JitPack (`com.github.stlahxm:llm-markdown-sanitizer:java-<version>`), browse versions at **https://jitpack.io/#stlahxm/llm-markdown-sanitizer**
+## Install & use
 
-Each subdirectory has its own README with install/usage details specific to that language. The core logic — code fence stripping, `<br>` handling, emphasis boundary fixes, list indentation, table repair — is ported 1:1 between the two, including bug fixes (see [CONTRIBUTING.md](CONTRIBUTING.md) for how changes should be kept in sync across both).
+### Python
+
+[![PyPI](https://img.shields.io/pypi/v/llm-markdown-sanitizer?label=pypi)](https://pypi.org/project/llm-markdown-sanitizer/)
+
+```bash
+pip install llm-markdown-sanitizer
+```
+
+```python
+from llm_markdown_sanitizer import clean_markdown
+
+clean_markdown("**Note**this needs a space")
+# "**Note** this needs a space"
+```
+
+→ full install options (uv, pinning, requirements.txt) and more usage examples (FastAPI, streaming chunks) in **[python/README.md](python/)**. Package page: **https://pypi.org/project/llm-markdown-sanitizer/**
+
+### Java
+
+[![JitPack](https://jitpack.io/v/stlahxm/llm-markdown-sanitizer.svg)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
+
+`build.gradle.kts`:
+```kotlin
+repositories {
+    mavenCentral()
+    maven { url = uri("https://jitpack.io") }
+}
+dependencies {
+    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.2.1")
+}
+```
+
+```java
+import io.github.stlahxm.markdownsanitizer.MarkdownSanitizer;
+
+MarkdownSanitizer.clean("**Note**this needs a space");
+// "**Note** this needs a space"
+```
+
+→ Maven/Groovy DSL variants and a Spring Boot controller example in **[java/README.md](java/)**. Browse versions: **https://jitpack.io/#stlahxm/llm-markdown-sanitizer**
+
+---
+
+Each subdirectory has its own README with the full install/usage details for that language. The core logic — code fence stripping, `<br>` handling, emphasis boundary fixes, list indentation, table repair — is ported 1:1 between the two, including bug fixes (see [CONTRIBUTING.md](CONTRIBUTING.md) for how changes should be kept in sync across both).
 
 ## Supported syntax and exact behavior
 
