@@ -37,13 +37,13 @@ pip install llm-markdown-sanitizer
 Pin a specific version if you want reproducible builds — see the [PyPI release history](https://pypi.org/project/llm-markdown-sanitizer/#history) for available versions:
 
 ```bash
-pip install "llm-markdown-sanitizer==0.2.2"
+pip install "llm-markdown-sanitizer==0.2.3"
 ```
 
 Add it to `requirements.txt` / `pyproject.toml` the normal way:
 
 ```
-llm-markdown-sanitizer>=0.2.2
+llm-markdown-sanitizer>=0.2.3
 ```
 
 Verify it installed correctly:

@@ -100,7 +100,7 @@ repositories {
     maven { url = uri("https://jitpack.io") }
 }
 dependencies {
-    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.2.1")
+    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.2.2")
 }
 ```
 
