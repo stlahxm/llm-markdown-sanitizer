@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "llm-markdown-sanitizer"
 version = "0.2.0"
-description = "Fix broken markdown that LLMs generate — tables, lists, emphasis, code fences. Zero dependencies, one function."
+description = "Fix broken markdown that LLMs generate — tables, lists, headings, emphasis, code fences, quotes. Zero dependencies, one function."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICEN[CS]E*"]

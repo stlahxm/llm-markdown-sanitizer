@@ -9,26 +9,25 @@
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![Java 17+](https://img.shields.io/badge/java-17%2B-orange)
 
-Fix broken markdown that LLMs generate — tables, lists, emphasis, code fences. Zero dependencies, one function/method.
+Fix broken markdown that LLMs generate — tables, lists, headings, emphasis, code fences, quotes. Zero dependencies, one function/method.
 
 - **Two language bindings, one behavior** — Python and Java share the same logic and the same test fixtures.
 - **Unicode-aware by construction** — the emphasis-spacing fix relies on `isalnum()`/`isLetterOrDigit()`, so Korean, CJK, and accented Latin text (café, 한글, 中文) are handled the same as plain ASCII with no per-language code path. Emoji and symbols are correctly left alone.
+- **Backed by real bug reports, not guesswork** — every fix traces back either to a bug found while testing this library against realistic documents, or to a documented, commonly-reported LLM markdown failure from developer communities and public issue trackers (linked per-feature below).
 - **No configuration** — call one function, get cleaned markdown back.
 
 **Contents:** [Before/after](#before--after) · [Python install](python/#install) · [Java install](java/#install) · [Supported syntax](#supported-syntax-and-exact-behavior) · [Contributing](#contributing)
 
 ## Before / after
 
-An LLM response like this — code fence wrapper, bold glued to text, a stray `<br>`, a table collapsed onto one line, a second table missing its separator row, more glued bold:
+An LLM response like this — code fence wrapper, bold glued to text, a stray `<br>`, a heading missing its space and its blank line, a table collapsed onto one line, a second table missing its separator row, more glued bold, curly quotes inside an inline code span:
 
 ````
 ```markdown
 # Release Notes
 
 **Breaking**this version changes the auth flow.<br>Update your client before upgrading.
-
-## Changes
-
+##What changed
 - Auth
   - New token format
     - Backward compatible for 30 days
@@ -40,7 +39,7 @@ Known issues (missing separator row):
 | Issue | Status |
 | Memory leak | Fixed |
 
-See the**migration guide**for details.
+See the**migration guide**for details. Example: `git commit -m “fix bug”`
 ```
 ````
 
@@ -52,8 +51,7 @@ See the**migration guide**for details.
 **Breaking** this version changes the auth flow.
 Update your client before upgrading.
 
-## Changes
-
+## What changed
 - Auth
     - New token format
         - Backward compatible for 30 days
@@ -65,7 +63,7 @@ Update your client before upgrading.
 | /refresh | Deprecated |
 
 
-See the **migration guide** for details.
+See the **migration guide** for details. Example: `git commit -m "fix bug"`
 ```
 
 The broken second table (no separator row) is dropped entirely rather than rendered as a wall of `|`. Everything else is repaired in place, with no configuration required.

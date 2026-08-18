@@ -52,7 +52,7 @@ publishing {
             from(components["java"])
             pom {
                 name.set("llm-markdown-sanitizer-java")
-                description.set("Fix broken markdown that LLMs generate -- tables, lists, emphasis, code fences. Zero dependencies, one method.")
+                description.set("Fix broken markdown that LLMs generate -- tables, lists, headings, emphasis, code fences, quotes. Zero dependencies, one method.")
                 url.set("https://github.com/stlahxm/llm-markdown-sanitizer-java")
                 licenses {
                     license {

@@ -6,7 +6,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/stlahxm/llm-markdown-sanitizer/python-ci.yml?branch=main)](https://github.com/stlahxm/llm-markdown-sanitizer/actions/workflows/python-ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/LICENSE)
 
-Fix broken markdown that LLMs generate. Zero dependencies, one function.
+Fix broken markdown that LLMs generate — tables, lists, headings, emphasis, code fences, quotes. Zero dependencies, one function.
 
 A Java binding with the same behavior is also available — see the [repository root](https://github.com/stlahxm/llm-markdown-sanitizer) for both.
 
@@ -111,6 +111,11 @@ Ask an LLM to answer in markdown and eventually you'll get: the whole answer wra
 | Inconsistent list indent | mixed 2/3/tab indents | normalized to 4 spaces per nesting level |
 | Collapsed table | `\| A \| B \| \| --- \| --- \| \| 1 \| 2 \|` | proper one-row-per-line table |
 | Broken table (no separator / mismatched columns) | renders as a wall of `\|` | dropped instead of rendering broken |
+| `\|` inside a table cell (escaped or in inline code) | miscounted as an extra column, table dropped | preserved, table kept |
+| Missing blank line before a list/heading | renders as a paragraph continuation | blank line inserted |
+| Missing space after `#` | `#Heading` stays plain text | `# Heading` |
+| Smart quotes inside code | `` `print(“hi”)` `` fails to parse | `` `print("hi")` `` |
+| Unclosed trailing code fence | rest of the answer swallowed as code | closing fence appended |
 
 ## Protecting your own syntax
 
