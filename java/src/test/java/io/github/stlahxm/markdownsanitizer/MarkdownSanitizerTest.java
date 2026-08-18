@@ -87,6 +87,16 @@ class MarkdownSanitizerTest {
     }
 
     @Test
+    void compactSingleLineTablePreservesCellSpacing() {
+        // Regression test: the row-splitting regex used to consume the space
+        // before the boundary pipe along with it, dropping the trailing space
+        // of the previous cell (e.g. "| B |" became "| B|"). This is the exact
+        // example shown in the README, so it must match byte-for-byte.
+        String text = "| A | B | | --- | --- | | 1 | 2 |";
+        assertEquals("| A | B |\n| --- | --- |\n| 1 | 2 |", MarkdownSanitizer.clean(text));
+    }
+
+    @Test
     void tableMissingSeparatorRowIsDropped() {
         String text = "Intro text\n| A | B |\n| 1 | 2 |\nOutro text";
         String result = MarkdownSanitizer.clean(text);

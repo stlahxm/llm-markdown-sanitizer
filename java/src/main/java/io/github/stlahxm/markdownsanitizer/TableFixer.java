@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 final class TableFixer {
 
-    private static final Pattern COMPACT_TABLE_BOUNDARY = Pattern.compile("\\s*\\|\\s+\\|(?=\\s*(?::?-{3,}:?|[^|\\s]))");
+    private static final Pattern COMPACT_TABLE_BOUNDARY = Pattern.compile("\\|\\s+\\|(?=\\s*(?::?-{3,}:?|[^|\\s]))");
     private static final Pattern ALIGNMENT_ROW = Pattern.compile("\\|\\s*:?-{3,}:?\\s*\\|");
     private static final Pattern COMPACT_ROW_BOUNDARY = Pattern.compile("\\|\\s+\\|");
     private static final Pattern SEPARATOR_CELL = Pattern.compile("^:?-{3,}:?$");

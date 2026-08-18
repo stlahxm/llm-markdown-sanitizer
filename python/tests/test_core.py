@@ -70,6 +70,16 @@ def test_compact_single_line_table_is_expanded():
     assert lines[1].strip().startswith("|")
 
 
+def test_compact_single_line_table_preserves_cell_spacing():
+    # Regression test: the row-splitting regex used to consume the space
+    # before the boundary pipe along with it, dropping the trailing space
+    # of the previous cell (e.g. "| B |" became "| B|"). This is the exact
+    # example shown in the README, so it must match byte-for-byte.
+    text = "| A | B | | --- | --- | | 1 | 2 |"
+    result = clean_markdown(text)
+    assert result == "| A | B |\n| --- | --- |\n| 1 | 2 |"
+
+
 def test_table_missing_separator_row_is_dropped():
     text = "Intro text\n| A | B |\n| 1 | 2 |\nOutro text"
     result = clean_markdown(text)

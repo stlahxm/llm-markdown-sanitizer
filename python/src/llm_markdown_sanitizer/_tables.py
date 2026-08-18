@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 
-_COMPACT_TABLE_BOUNDARY_RE = re.compile(r"\s*\|\s+\|(?=\s*(?::?-{3,}:?|[^|\s]))")
+_COMPACT_TABLE_BOUNDARY_RE = re.compile(r"\|\s+\|(?=\s*(?::?-{3,}:?|[^|\s]))")
 _TABLE_SEPARATOR_CELL_RE = re.compile(r"^:?-{3,}:?$")
 
 
