@@ -106,7 +106,7 @@ Since `MarkdownSanitizer.clean()` is a stateless static method with no I/O, it's
 
 ## Why this exists
 
-If a Spring service stores LLM-generated content and serves it straight to a frontend, the same markdown problems that show up in the Python ecosystem show up here too: a stray ` ```markdown ` fence around the whole response, `**bold**text` glued onto the next word, inconsistent list indentation, and tables that are either collapsed onto one line or missing a separator row. `MarkdownSanitizer.clean()` fixes all of that before the response goes out.
+If a Spring service stores LLM-generated content and serves it straight to a frontend, the same markdown problems that show up in the Python ecosystem show up here too: a stray ` ```markdown ` fence around the whole response (or left unclosed at the end), `**bold**text` glued onto the next word, a heading missing its space or its blank line, curly quotes inside a code sample, inconsistent list indentation, and tables that are either collapsed onto one line or missing a separator row. `MarkdownSanitizer.clean()` fixes all of that before the response goes out.
 
 ## What it fixes
 
@@ -142,7 +142,7 @@ cd java
 
 ## Origin
 
-Ported from the [Python version](../python) of this package, keeping the same behavior and test fixtures. The list-indentation and placeholder-namespace bugs found and fixed there (see the repository's issue history) were already fixed at the time of this port.
+Ported from the [Python version](../python) of this package, sharing the same behavior and test fixtures. Both sides are kept in lockstep as bugs and new fixes land in either language — see [AGENTS.md](../AGENTS.md) for the cross-port rule.
 
 ## Contributing
 

@@ -9,6 +9,18 @@ This is a monorepo with two language bindings that are meant to behave identical
 - `python/` — the PyPI package (`llm-markdown-sanitizer`)
 - `java/` — the JitPack-distributed Java library (`io.github.stlahxm.markdownsanitizer`)
 
+Each side has one module per concern, same split on both languages:
+
+| Concern | Python | Java |
+|---|---|---|
+| Orchestration / entry point | `_core.py` | `MarkdownSanitizer.java` |
+| Placeholder protect/restore primitive | `_protect.py` | `PlaceholderProtector.java` |
+| Bold/italic emphasis spacing | `_emphasis.py` | `EmphasisFixer.java` |
+| List markers/indentation | `_lists.py` | `ListFixer.java` |
+| Table repair | `_tables.py` | `TableFixer.java` |
+| Blank-line/heading-space spacing fixes | `_spacing.py` | `SpacingFixer.java` |
+| Smart-quote normalization in code | `_quotes.py` | `QuoteFixer.java` |
+
 A behavior change made in one should generally be ported to the other. When fixing a bug, check whether the equivalent code exists in both `python/src/llm_markdown_sanitizer/` and `java/src/main/java/io/github/stlahxm/markdownsanitizer/` before considering the fix complete.
 
 ## Project scope
@@ -36,7 +48,7 @@ cd python && pip install -e ".[dev]" && pytest -v
 
 Java:
 ```bash
-cd java && gradle build
+cd java && ./gradlew build
 ```
 
 - Add a test that fails before the change and passes after it.

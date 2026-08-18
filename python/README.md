@@ -97,7 +97,7 @@ clean_markdown(chunks)
 
 ## Why this exists
 
-Ask an LLM to answer in markdown and eventually you'll get: the whole answer wrapped in a stray ` ```markdown ` fence, `**bold**text` glued directly onto the next word, list indentation that's inconsistent within the same response, and tables that are either collapsed onto one line or missing a separator row. Rendering that output as-is breaks the UI.
+Ask an LLM to answer in markdown and eventually you'll get: the whole answer wrapped in a stray ` ```markdown ` fence (or left unclosed at the end), `**bold**text` glued directly onto the next word, a heading missing its space or its blank line, curly quotes inside a code sample, list indentation that's inconsistent within the same response, and tables that are either collapsed onto one line or missing a separator row. Rendering that output as-is breaks the UI.
 
 `clean_markdown()` fixes all of the above in a single left-to-right pass over the text — no whole-string regex backtracking, so it stays fast on long documents.
 

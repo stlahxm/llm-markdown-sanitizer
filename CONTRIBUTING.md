@@ -39,7 +39,7 @@ Java:
 
 ```bash
 cd java
-gradle build
+./gradlew build
 ```
 
 ## Submitting a PR

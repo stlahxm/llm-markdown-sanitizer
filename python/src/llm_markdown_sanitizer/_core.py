@@ -113,12 +113,18 @@ def clean_markdown(text: object, *, protect_patterns: list[re.Pattern[str]] | No
     so this stays fast even on long documents):
 
     - a stray ```markdown fence wrapped around the whole answer
+    - an unclosed trailing code fence (auto-closed at end of document)
     - `<br>` tags outside of tables (converted to real newlines)
-    - `**bold**text` glued directly onto surrounding words
-    - inconsistent list indentation
+    - `**bold**`/`***bold italic***` glued directly onto surrounding words
+    - smart/curly quotes inside code (fenced blocks and inline spans)
+    - inconsistent list indentation, and inconsistent `-`/`*`/`+` bullet markers
+    - a missing blank line before a list/heading following a paragraph
+    - a missing space after `#` in ATX headings
     - tables collapsed onto a single line
     - tables missing a separator row / with mismatched column counts
       (dropped instead of rendered broken)
+    - a literal `|` inside a table cell (backslash-escaped or in inline
+      code) being miscounted as an extra column
 
     Args:
         text: the raw LLM output. Also accepts a list of

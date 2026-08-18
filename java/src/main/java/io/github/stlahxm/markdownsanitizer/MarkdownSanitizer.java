@@ -11,19 +11,25 @@ import java.util.regex.Pattern;
  *
  * <ul>
  *   <li>a stray {@code ```markdown} fence wrapped around the whole answer</li>
+ *   <li>an unclosed trailing code fence (auto-closed at end of document)</li>
  *   <li>{@code <br>} tags outside of tables (converted to real newlines)</li>
- *   <li>{@code **bold**text} glued directly onto surrounding words</li>
- *   <li>inconsistent list indentation</li>
+ *   <li>{@code **bold**}/{@code ***bold italic***} glued directly onto surrounding words</li>
+ *   <li>smart/curly quotes inside code (fenced blocks and inline spans)</li>
+ *   <li>inconsistent list indentation, and inconsistent {@code -}/{@code *}/{@code +} bullet markers</li>
+ *   <li>a missing blank line before a list/heading following a paragraph</li>
+ *   <li>a missing space after {@code #} in ATX headings</li>
  *   <li>tables collapsed onto a single line</li>
  *   <li>tables missing a separator row / with mismatched column counts
  *       (dropped instead of rendered broken)</li>
+ *   <li>a literal {@code |} inside a table cell (backslash-escaped or in
+ *       inline code) being miscounted as an extra column</li>
  * </ul>
  *
  * <p>Java port of the Python <a href="https://github.com/stlahxm/llm-markdown-sanitizer">
  * llm-markdown-sanitizer</a> package -- same behavior, same test fixtures,
- * ported after that package's bug fixes (see {@link ListFixer} and
- * {@link PlaceholderProtector} for the two bugs found and fixed there before
- * this port existed).
+ * kept in lockstep as bugs and new fixes land in either language (see
+ * {@link ListFixer} and {@link PlaceholderProtector} for two early bugs
+ * found this way, and {@code AGENTS.md} for the cross-port-both-languages rule).
  */
 public final class MarkdownSanitizer {
 
