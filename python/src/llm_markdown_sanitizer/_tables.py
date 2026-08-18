@@ -12,12 +12,43 @@ import re
 
 _COMPACT_TABLE_BOUNDARY_RE = re.compile(r"\s*\|\s+\|(?=\s*(?::?-{3,}:?|[^|\s]))")
 _TABLE_SEPARATOR_CELL_RE = re.compile(r"^:?-{3,}:?$")
-# GFM lets a cell contain a literal `|` if it's backslash-escaped (`\|`).
-# A naive `str.split("|")` counts that escaped pipe as a real column
-# boundary, which mismatches the true column count against the header/
-# separator rows and gets the whole (valid!) table dropped as "broken".
-# This regex splits only on pipes NOT preceded by a backslash.
-_UNESCAPED_PIPE_RE = re.compile(r"(?<!\\)\|")
+
+
+def _split_table_cells(text: str) -> list[str]:
+    """Split a table row on `|` characters, the same way GFM itself does:
+    a pipe does NOT start a new cell if it's backslash-escaped (`\\|`) or
+    if it falls inside a backtick-delimited inline code span (`` `a|b` ``)
+    -- both are valid ways to put a literal `|` inside a cell. A naive
+    `str.split("|")` treats every pipe as a column boundary, which
+    mismatches the row's cell count against the header/separator row and
+    gets the whole (valid!) table dropped as "broken"."""
+    cells: list[str] = []
+    current: list[str] = []
+    in_code_span = False
+    i = 0
+    length = len(text)
+
+    while i < length:
+        char = text[i]
+        if char == "\\" and i + 1 < length and text[i + 1] == "|":
+            current.append("\\|")
+            i += 2
+            continue
+        if char == "`":
+            in_code_span = not in_code_span
+            current.append(char)
+            i += 1
+            continue
+        if char == "|" and not in_code_span:
+            cells.append("".join(current))
+            current = []
+            i += 1
+            continue
+        current.append(char)
+        i += 1
+
+    cells.append("".join(current))
+    return cells
 
 
 def expand_compact_table_line(line: str) -> list[str]:
@@ -46,7 +77,7 @@ def _cell_count(line: str) -> int:
         return 0
     if stripped.endswith("|"):
         stripped = stripped[:-1]
-    return len(_UNESCAPED_PIPE_RE.split(stripped)) - 1
+    return len(_split_table_cells(stripped)) - 1
 
 
 def _is_separator_row(line: str) -> bool:
@@ -56,7 +87,7 @@ def _is_separator_row(line: str) -> bool:
     stripped = line.strip().strip("|").strip()
     if not stripped:
         return False
-    cells = [cell.strip() for cell in _UNESCAPED_PIPE_RE.split(stripped)]
+    cells = [cell.strip() for cell in _split_table_cells(stripped)]
     return bool(cells) and all(_TABLE_SEPARATOR_CELL_RE.match(cell) for cell in cells)
 
 

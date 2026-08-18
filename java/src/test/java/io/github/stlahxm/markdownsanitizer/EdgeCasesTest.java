@@ -78,34 +78,44 @@ class EdgeCasesTest {
     // --- Documented known limitations (see README "Known limitation" sections) ---
 
     @Test
-    void knownLimitationTripleAsteriskIsPassedThroughUnchanged() {
-        // `***bold italic***` (combined bold+italic) is not a pattern this
-        // library specifically targets -- it's neither corrupted nor fixed.
-        String text = "This is ***bold italic***text here.";
+    void tripleAsteriskBoldItalicGetsEmphasisSpacingToo() {
+        // `***bold italic***` (combined bold+italic) glued to surrounding
+        // text has the same rendering-ambiguity problem as `**bold**text`
+        // and gets the same boundary-space treatment, matched as a
+        // same-width `***...***` pair (checked before the `**` case,
+        // since `**` is a prefix of `***`).
+        assertEquals("This is ***bold italic*** text here.",
+                MarkdownSanitizer.clean("This is ***bold italic***text here."));
+    }
+
+    @Test
+    void pipeInsideInlineCodeInATableCellIsPreserved() {
+        // A `|` inside inline code within a table cell (`a|b`) is valid
+        // GFM and must not be miscounted as an extra column -- previously
+        // this dropped the entire otherwise-valid table (issue #5 follow-up).
+        String text = "| Code | Desc |\n| --- | --- |\n| `a|b` | pipe in code |";
         assertEquals(text, MarkdownSanitizer.clean(text));
     }
 
     @Test
-    void knownLimitationPipeInsideInlineCodeInATableCellStillDropsTheTable() {
-        // Unlike a backslash-escaped pipe (fixed, see issue #5), a `|`
-        // inside inline code within a table cell isn't recognized as
-        // non-tabular -- it still gets miscounted as an extra column and
-        // the table is dropped. Fixing this requires tracking backtick
-        // code-span boundaries within a line, deferred as noted in the
-        // README's Table repair section.
-        String text = "| Code | Desc |\n| --- | --- |\n| `a|b` | pipe in code |";
-        assertEquals("", MarkdownSanitizer.clean(text));
+    void boldBetweenTwoUnrelatedDollarAmountsGetsFixed() {
+        // Two bare, plain-language words separated only by whitespace
+        // inside a `$...$` candidate span (e.g. "note and") is a strong
+        // signal it's prose with incidental dollar signs, not real math --
+        // real math almost never has bare space-separated words, since
+        // LaTeX text is normally `\text{...}`-wrapped or joined by
+        // operators/braces. Such candidates are declined from math
+        // protection so the emphasis normalizer still runs on them.
+        assertEquals("Item costs $5 **important** note and $10 total.",
+                MarkdownSanitizer.clean("Item costs $5**important**note and $10 total."));
     }
 
     @Test
-    void knownLimitationBoldBetweenTwoUnrelatedDollarAmountsIsNotFixed() {
-        // Math-span detection treats any `$...$` pair as protected math,
-        // since `$...$` isn't part of the CommonMark/GFM spec and there's
-        // no authoritative grammar to distinguish "real" math from two
-        // unrelated dollar amounts on the same line. A `**bold**` span
-        // falling between them is conservatively left alone rather than
-        // risking mangling real math.
-        String text = "Item costs $5**important**note and $10 total.";
+    void realMathWithLatexTextCommandsIsStillProtected() {
+        // A guard against the heuristic above being too aggressive:
+        // \text{...} LaTeX commands joined by operators/braces (not bare
+        // whitespace) should still be recognized as real math and left untouched.
+        String text = "formula $\\text{distance} = \\text{speed}\\times t$ done";
         assertEquals(text, MarkdownSanitizer.clean(text));
     }
 }

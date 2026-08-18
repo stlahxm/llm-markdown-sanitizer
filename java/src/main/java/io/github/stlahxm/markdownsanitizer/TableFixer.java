@@ -21,14 +21,52 @@ final class TableFixer {
     private static final Pattern ALIGNMENT_ROW = Pattern.compile("\\|\\s*:?-{3,}:?\\s*\\|");
     private static final Pattern COMPACT_ROW_BOUNDARY = Pattern.compile("\\|\\s+\\|");
     private static final Pattern SEPARATOR_CELL = Pattern.compile("^:?-{3,}:?$");
-    // GFM lets a cell contain a literal `|` if it's backslash-escaped (`\|`).
-    // A naive split on "|" counts that escaped pipe as a real column
-    // boundary, which mismatches the true column count against the header/
-    // separator rows and gets the whole (valid!) table dropped as "broken".
-    // This splits only on pipes NOT preceded by a backslash.
-    private static final Pattern UNESCAPED_PIPE = Pattern.compile("(?<!\\\\)\\|");
 
     private TableFixer() {
+    }
+
+    /**
+     * Splits a table row on {@code |} characters, the same way GFM itself
+     * does: a pipe does NOT start a new cell if it's backslash-escaped
+     * ({@code \|}) or if it falls inside a backtick-delimited inline code
+     * span ({@code `a|b`}) -- both are valid ways to put a literal
+     * {@code |} inside a cell. A naive split on {@code "|"} treats every
+     * pipe as a column boundary, which mismatches the row's cell count
+     * against the header/separator row and gets the whole (valid!) table
+     * dropped as "broken".
+     */
+    private static List<String> splitTableCells(String text) {
+        List<String> cells = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inCodeSpan = false;
+        int i = 0;
+        int length = text.length();
+
+        while (i < length) {
+            char c = text.charAt(i);
+            if (c == '\\' && i + 1 < length && text.charAt(i + 1) == '|') {
+                current.append("\\|");
+                i += 2;
+                continue;
+            }
+            if (c == '`') {
+                inCodeSpan = !inCodeSpan;
+                current.append(c);
+                i++;
+                continue;
+            }
+            if (c == '|' && !inCodeSpan) {
+                cells.add(current.toString());
+                current.setLength(0);
+                i++;
+                continue;
+            }
+            current.append(c);
+            i++;
+        }
+
+        cells.add(current.toString());
+        return cells;
     }
 
     /**
@@ -66,7 +104,7 @@ final class TableFixer {
         if (stripped.endsWith("|")) {
             stripped = stripped.substring(0, stripped.length() - 1);
         }
-        return UNESCAPED_PIPE.split(stripped, -1).length - 1;
+        return splitTableCells(stripped).size() - 1;
     }
 
     /**
@@ -80,7 +118,7 @@ final class TableFixer {
         if (stripped.isEmpty()) {
             return false;
         }
-        String[] cells = UNESCAPED_PIPE.split(stripped, -1);
+        List<String> cells = splitTableCells(stripped);
         for (String cell : cells) {
             if (!SEPARATOR_CELL.matcher(cell.strip()).matches()) {
                 return false;

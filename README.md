@@ -95,13 +95,13 @@ Any ` ``` ` fence that isn't the whole-document wrapper (see above) opens a bloc
 - Matches `<br>`, `<br/>`, `<br />` (case-insensitive, any spacing before the slash).
 - Converted to a real newline **only outside table rows**. A line is treated as a table row if it starts with `|` after stripping leading whitespace — inside those, `<br>` is left as literal text, since GFM tables use it intentionally for multi-line cell content.
 
-### `**bold**` spacing
+### `**bold**` and `***bold italic***` spacing
 
-- Detects `**...**` spans and inserts a space on either side if the adjacent character would otherwise be glued to it.
+- Detects `**...**` and `***...***` spans (matched as same-width pairs — a `***` marker is never closed by a `**`) and inserts a space on either side if the adjacent character would otherwise be glued to it.
 - "Glued" is decided by Unicode alphanumeric classification (`Character.isLetterOrDigit` in Java / `str.isalnum()` in Python) — this covers Latin letters, digits, Korean Hangul, CJK characters, and accented letters (café, naïve, etc.) uniformly, with no per-language special-casing needed. Punctuation, symbols, whitespace, and emoji are **not** alphanumeric, so `**bold**😀` or `**bold**©` are left as-is (they don't have the rendering ambiguity `**bold**word` has in some markdown engines).
-- `**` inside inline math spans (`$...$` or `$$...$$`) is never touched, so LaTeX like `$a^{**}b$` survives untouched even though it contains the exact `**` sequence being fixed elsewhere.
+- `**`/`***` inside a *real* inline math span (`$...$` or `$$...$$`) is never touched, so LaTeX like `$a^{**}b$` survives untouched even though it contains the exact `**` sequence being fixed elsewhere. Math-span candidates are filtered by a heuristic before being protected — see "Known limitation" below.
 - Empty bold (`****`) is dropped rather than re-emitted.
-- Unclosed `**` (no matching closing pair) is left as plain text — not treated as an error, just skipped.
+- Unclosed `**`/`***` (no matching closing pair of the same width) is left as plain text — not treated as an error, just skipped.
 - Only recognized within a single line — a `**bold**` span split across a line break by the model is not detected or fixed.
 
 ### List indentation
@@ -124,7 +124,7 @@ Blocks that fail any of these are dropped entirely (along with a dangling `Some 
 
 Separately, a table collapsed onto a single line (every row's `|`-boundaries glued together with just whitespace between them) is expanded back into one row per line **before** the validity check above runs.
 
-Cell/column counting splits on `|` characters that are **not** backslash-escaped, so a GFM-valid literal pipe inside a cell (`\|`) doesn't get miscounted as an extra column and drag the whole table into the "dropped as broken" path. A `|` inside inline code (`` `a|b` ``) isn't handled the same way yet — that still triggers the mismatch, since it requires tracking backtick code-span boundaries within a line rather than just an escape character. Tracked in [#5](https://github.com/stlahxm/llm-markdown-sanitizer/issues/5).
+Cell/column counting respects the two GFM-valid ways to put a literal `|` inside a cell: backslash-escaped (`\|`) and inside inline code (`` `a|b` ``). A line-scanner tracks backtick code-span boundaries and escape sequences so neither kind of literal pipe gets miscounted as an extra column and drags the whole table into the "dropped as broken" path. See [#5](https://github.com/stlahxm/llm-markdown-sanitizer/issues/5) for the original bug report.
 
 ### Protecting your own syntax (`protectPatterns` / `protect_patterns`)
 
@@ -142,7 +142,7 @@ Headings, blockquotes, horizontal rules, inline code spans, links, and images ar
 
 ### Known limitation: math-span detection is a heuristic, not a parser
 
-Inline math protection (see "`**bold**` spacing" above) treats *any* `$...$` pair as a math span, since neither `$...$` nor `$$...$$` are part of the CommonMark/GFM spec — they're a convention different renderers interpret differently, so there's no authoritative grammar to parse against. In practice this means a line with two unrelated dollar amounts (`Item costs $5 and $10 total`) is treated as one "math span" spanning both, which is usually harmless — but if a genuine `**bold**` span happens to fall between them on the same line, it won't get its spacing fixed, since the whole region between the two `$` is protected as if it were math. This is a conservative tradeoff (nothing gets corrupted, a rare case just doesn't get fixed) rather than a data-loss bug.
+Inline math protection (see "`**bold**` spacing" above) can't tell "real" math apart from two unrelated dollar amounts on the same line using a grammar, since neither `$...$` nor `$$...$$` are part of the CommonMark/GFM spec — they're a convention different renderers interpret differently. To reduce false positives (e.g. `Item costs $5 and $10 total` being treated as one math span spanning both amounts), a candidate span is only protected if it doesn't contain two bare, plain-language words separated by nothing but whitespace — real math essentially never does, since LaTeX text is normally `\text{...}`-wrapped or joined by operators/braces rather than bare spaces. This is a heuristic, not a parser: it correctly handles the cases this library's test suite covers, but isn't guaranteed to classify every possible input correctly. When it declines to protect a span, the worst case is a `**bold**` inside real, unusual-looking math not getting its spacing fixed — not data loss.
 
 ## Contributing
 

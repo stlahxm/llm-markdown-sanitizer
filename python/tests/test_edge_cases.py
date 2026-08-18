@@ -63,28 +63,37 @@ def test_bold_inside_inline_code_happens_to_survive_due_to_backtick_boundary():
 # --- Documented known limitations (see README "Known limitation" sections) ---
 
 
-def test_known_limitation_triple_asterisk_is_passed_through_unchanged():
-    """`***bold italic***` (combined bold+italic) is not a pattern this
-    library specifically targets -- it's neither corrupted nor fixed."""
-    text = "This is ***bold italic***text here."
+def test_triple_asterisk_bold_italic_gets_emphasis_spacing_too():
+    """`***bold italic***` (combined bold+italic) glued to surrounding text
+    has the same rendering-ambiguity problem as `**bold**text` and gets the
+    same boundary-space treatment, matched as a same-width `***...***` pair
+    (checked before the `**` case, since `**` is a prefix of `***`)."""
+    assert clean_markdown("This is ***bold italic***text here.") == "This is ***bold italic*** text here."
+
+
+def test_pipe_inside_inline_code_in_a_table_cell_is_preserved():
+    """A `|` inside inline code within a table cell (`` `a|b` ``) is valid
+    GFM and must not be miscounted as an extra column -- previously this
+    dropped the entire otherwise-valid table (issue #5 follow-up)."""
+    text = "| Code | Desc |\n| --- | --- |\n| `a|b` | pipe in code |"
     assert clean_markdown(text) == text
 
 
-def test_known_limitation_pipe_inside_inline_code_in_a_table_cell_still_drops_the_table():
-    """Unlike a backslash-escaped pipe (fixed, see issue #5), a `|` inside
-    inline code within a table cell isn't recognized as non-tabular --
-    it still gets miscounted as an extra column and the table is dropped.
-    Fixing this requires tracking backtick code-span boundaries within a
-    line, deferred as noted in the README's Table repair section."""
-    text = "| Code | Desc |\n| --- | --- |\n| `a|b` | pipe in code |"
-    assert clean_markdown(text) == ""
-
-
-def test_known_limitation_bold_between_two_unrelated_dollar_amounts_is_not_fixed():
-    """Math-span detection treats any `$...$` pair as protected math, since
-    `$...$` isn't part of the CommonMark/GFM spec and there's no
-    authoritative grammar to distinguish "real" math from two unrelated
-    dollar amounts on the same line. A `**bold**` span falling between them
-    is conservatively left alone rather than risking mangling real math."""
+def test_bold_between_two_unrelated_dollar_amounts_gets_fixed():
+    """Two bare, plain-language words separated only by whitespace inside
+    a `$...$` candidate span (e.g. "note and") is a strong signal it's
+    prose with incidental dollar signs, not real math -- real math almost
+    never has bare space-separated words, since LaTeX text is normally
+    `\\text{...}`-wrapped or joined by operators/braces. Such candidates
+    are declined from math protection so the emphasis normalizer still
+    runs on them."""
     text = "Item costs $5**important**note and $10 total."
+    assert clean_markdown(text) == "Item costs $5 **important** note and $10 total."
+
+
+def test_real_math_with_latex_text_commands_is_still_protected():
+    r"""A guard against the heuristic above being too aggressive: `\text{...}`
+    LaTeX commands joined by operators/braces (not bare whitespace) should
+    still be recognized as real math and left untouched."""
+    text = r"formula $\text{distance} = \text{speed}\times t$ done"
     assert clean_markdown(text) == text
