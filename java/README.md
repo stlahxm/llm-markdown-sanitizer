@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.5")
+    implementation("com.github.stlahxm:llm-markdown-sanitizer:java-v0.2.0")
 }
 ```
 
@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.stlahxm:llm-markdown-sanitizer:java-v0.1.5'
+    implementation 'com.github.stlahxm:llm-markdown-sanitizer:java-v0.2.0'
 }
 ```
 
@@ -54,7 +54,7 @@ Maven (`pom.xml`):
     <dependency>
         <groupId>com.github.stlahxm</groupId>
         <artifactId>llm-markdown-sanitizer</artifactId>
-        <version>java-v0.1.5</version>
+        <version>java-v0.2.0</version>
     </dependency>
 </dependencies>
 ```

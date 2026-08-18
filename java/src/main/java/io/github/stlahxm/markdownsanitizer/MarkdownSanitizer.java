@@ -125,7 +125,13 @@ public final class MarkdownSanitizer {
 
             if (inCodeFence) {
                 protectedIndices.add(cleanedLines.size());
-                cleanedLines.add(rawLine);
+                // The whole line is code, but "smart" quotes inside it
+                // aren't protected content in the same sense as everything
+                // else here -- they're a separate, common LLM mistake
+                // (curly quotes break code that gets copy-pasted or
+                // parsed) worth fixing even inside an otherwise-untouched
+                // fence.
+                cleanedLines.add(QuoteFixer.normalizeQuotesInFencedLine(rawLine));
                 if (isFenceMarker) {
                     inCodeFence = false;
                 }
@@ -139,11 +145,27 @@ public final class MarkdownSanitizer {
             }
 
             String line = convertBrTagsOutsideTables(rawLine);
+            line = SpacingFixer.fixHeadingMissingSpace(line);
+            line = QuoteFixer.normalizeQuotesInInlineCode(line);
             line = EmphasisFixer.normalizeBoundaries(line);
             for (String expandedLine : TableFixer.expandCompactTableLine(line)) {
                 String previous = cleanedLines.isEmpty() ? "" : cleanedLines.get(cleanedLines.size() - 1);
-                cleanedLines.add(ListFixer.normalizeLine(expandedLine, previous));
+                String normalized = ListFixer.normalizeLine(expandedLine, previous);
+                if (SpacingFixer.needsBlankLineBefore(normalized, previous)) {
+                    cleanedLines.add("");
+                }
+                cleanedLines.add(normalized);
             }
+        }
+
+        if (inCodeFence) {
+            // The model never closed its own fence -- a common failure
+            // mode, especially when the answer gets cut off or the model
+            // loses track of an inner illustrative fence nested inside the
+            // real one. Close it rather than leaving the rest of the
+            // document (if any) rendered as literal code, or losing the
+            // closing marker's absence silently.
+            cleanedLines.add("```");
         }
 
         cleanedLines = TableFixer.removeIncompleteTables(cleanedLines, protectedIndices);

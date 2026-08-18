@@ -90,6 +90,8 @@ Everything below applies identically to the Python and Java bindings. Processing
 
 Any ` ``` ` fence that isn't the whole-document wrapper (see above) opens a block whose content is passed through **completely untouched** — none of the passes below (bold spacing, list normalization, table repair, `<br>` conversion) run on it, and lines inside it are never mistaken for a table or list even if they start with `-` or `|`. This matters concretely: a Python code sample containing `**kwargs` or a `| not | a | table |` comment used to get corrupted (the `**` silently deleted, or the whole line dropped as a fake broken table) before this protection existed.
 
+If the model never closes its own fence (a documented, recurring failure mode — see e.g. [anthropics/claude-code#17559](https://github.com/anthropics/claude-code/issues/17559)), a closing ` ``` ` is appended at the end of the document rather than leaving everything after it silently treated as more code (or the missing close silently ignored) — see [#13](https://github.com/stlahxm/llm-markdown-sanitizer/issues/13). This does not attempt to repair the harder, more ambiguous case of nested fences with mismatched lengths colliding mid-document — see [#9](https://github.com/stlahxm/llm-markdown-sanitizer/issues/9).
+
 ### `<br>` tags
 
 - Matches `<br>`, `<br/>`, `<br />` (case-insensitive, any spacing before the slash).
@@ -106,11 +108,23 @@ Any ` ``` ` fence that isn't the whole-document wrapper (see above) opens a bloc
 
 ### List indentation
 
-- Recognizes `-`, `*`, or `+` bullet markers; all are normalized to `-` in the output.
+- Recognizes `-`, `*`, or `+` bullet markers; **all are normalized to `-`** in the output, so a model switching marker characters mid-answer (a documented cause of one list visually splitting into two, since CommonMark treats a marker change as starting a new list) doesn't cause that split.
 - Indentation scale is a flat 2 raw spaces (tabs expanded to 4 spaces) per nesting level, capped at 3 levels deep — this is the CommonMark-minimum nesting indent for a `-` marker (marker width 1 + 1 required space), and also what LLMs converge on in practice. See [`_lists.py`](python/src/llm_markdown_sanitizer/_lists.py) / [`ListFixer.java`](java/src/main/java/io/github/stlahxm/markdownsanitizer/ListFixer.java) for the exact derivation.
 - A heavily indented (4+ spaces) plain-text line immediately following a near-top-level list item is treated as a wrapped continuation of that item and re-indented under it.
 - **Not handled**: ordered lists (`1.`, `2.`, ...) are passed through untouched — this library only normalizes bullet lists.
 - Lines inside a table row or an embedded code fence are never touched by list normalization.
+
+### Missing blank line before a list or heading
+
+A list or heading immediately following a non-blank paragraph line (one that isn't itself a list item, heading, or table row) gets a blank line inserted before it. Without this, CommonMark-strict renderers treat the list/heading as a continuation of the preceding paragraph and it renders as plain text instead of a structural element — one of the most commonly reported causes of "broken" LLM markdown ([anthropics/claude-code#17554](https://github.com/anthropics/claude-code/issues/17554)). Idempotent: does nothing if a blank line is already present, and never inserts one between consecutive list items or consecutive headings. See [#10](https://github.com/stlahxm/llm-markdown-sanitizer/issues/10).
+
+### Missing space after `#` in headings
+
+`#Heading` isn't a valid ATX heading per CommonMark — without a space after the `#` run it's just a paragraph starting with a literal `#`. Fixed to `# Heading` (through `######`), but only when a letter (Latin or Korean) immediately follows the `#` run — a digit or symbol there (`#1`, `#tag`) is left alone, since those are common in real prose as issue references or hashtags rather than a heading missing its space. See [#11](https://github.com/stlahxm/llm-markdown-sanitizer/issues/11).
+
+### Smart quotes inside code
+
+Typographic/"smart" quotes (`“` `”` `‘` `’`) are normalized to straight ASCII quotes inside fenced code blocks and inline `` `code` `` spans, since code with curly quotes instead of straight ones fails to compile/parse and looks wrong when copy-pasted. Prose text outside of code is deliberately left untouched — curly quotes there may be intentional stylistic output, not a bug. See [#12](https://github.com/stlahxm/llm-markdown-sanitizer/issues/12).
 
 ### Table repair
 

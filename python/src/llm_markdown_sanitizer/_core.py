@@ -5,6 +5,8 @@ import re
 from ._emphasis import normalize_emphasis_boundaries
 from ._lists import normalize_list_line
 from ._protect import protect_many_and_restore
+from ._quotes import normalize_quotes_in_fenced_line, normalize_quotes_in_inline_code
+from ._spacing import fix_heading_missing_space, needs_blank_line_before
 from ._tables import expand_compact_table_line, remove_incomplete_tables
 
 _BR_TAG_RE = re.compile(r"<br\s*/?\s*>", re.IGNORECASE)
@@ -66,7 +68,12 @@ def _clean_lines(text: str) -> str:
 
         if in_code_fence:
             protected_indices.add(len(cleaned_lines))
-            cleaned_lines.append(line)
+            # The whole line is code, but "smart" quotes inside it aren't
+            # protected content in the same sense as everything else here --
+            # they're a separate, common LLM mistake (curly quotes break
+            # code that gets copy-pasted or parsed) worth fixing even
+            # inside an otherwise-untouched fence.
+            cleaned_lines.append(normalize_quotes_in_fenced_line(line))
             if is_fence_marker:
                 in_code_fence = False
             continue
@@ -77,10 +84,23 @@ def _clean_lines(text: str) -> str:
             continue
 
         line = _convert_br_tags_outside_tables(line)
+        line = fix_heading_missing_space(line)
+        line = normalize_quotes_in_inline_code(line)
         line = normalize_emphasis_boundaries(line)
         for expanded_line in expand_compact_table_line(line):
-            normalized = normalize_list_line(expanded_line, cleaned_lines[-1] if cleaned_lines else "")
+            previous = cleaned_lines[-1] if cleaned_lines else ""
+            normalized = normalize_list_line(expanded_line, previous)
+            if needs_blank_line_before(normalized, previous):
+                cleaned_lines.append("")
             cleaned_lines.append(normalized)
+
+    if in_code_fence:
+        # The model never closed its own fence -- a common failure mode,
+        # especially when the answer gets cut off or the model loses track
+        # of an inner illustrative fence nested inside the real one. Close
+        # it rather than leaving the rest of the document (if any) rendered
+        # as literal code, or losing the closing marker's absence silently.
+        cleaned_lines.append("```")
 
     cleaned_lines = remove_incomplete_tables(cleaned_lines, frozenset(protected_indices))
     return "\n".join(cleaned_lines).strip()
