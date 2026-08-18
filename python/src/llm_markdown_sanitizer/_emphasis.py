@@ -15,10 +15,22 @@ _MATH_SPAN_RE = re.compile(r"\${1,2}[\s\S]*?\${1,2}")
 
 
 def _is_alnum_boundary(value: str) -> bool:
+    """Whether `value` (a single character, or "" for "no character here")
+    would visually/parseably glue onto a `**` marker if left touching it.
+    `str.isalnum()` is Unicode-aware, so this treats Korean, CJK, and
+    accented Latin characters the same as plain ASCII letters/digits with
+    no per-language special-casing -- and correctly leaves emoji, symbols,
+    and punctuation alone, since those don't have the same gluing problem."""
     return bool(value) and value.isalnum()
 
 
 def _normalize_emphasis_tokens(text: str) -> str:
+    """Single left-to-right scan: copy characters through unchanged until a
+    `**` is found, then look for its matching close on the rest of the
+    (already math-span-protected) string. A complete `**...**` pair gets
+    re-emitted with a boundary space added on whichever side(s) would
+    otherwise glue onto adjacent alphanumeric text. An unmatched `**` is
+    copied through literally (see the comment below) rather than dropped."""
     output: list[str] = []
     index = 0
 

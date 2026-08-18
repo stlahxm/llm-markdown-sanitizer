@@ -126,3 +126,12 @@ def test_placeholder_never_leaks_into_output_when_followed_by_a_digit():
     result = clean_markdown(text)
     assert "MDSAN" not in result
     assert result == "This costs $5 and that one costs $10, so **buy** the cheaper one."
+
+
+def test_table_with_escaped_pipe_in_a_cell_is_preserved():
+    """A cell containing a backslash-escaped pipe (valid GFM: `\\|` is a
+    literal `|`, not a column boundary) used to make that row's cell count
+    disagree with the header/separator row, so the incomplete-table
+    remover dropped the entire otherwise-valid table."""
+    text = "| A | B |\n| --- | --- |\n| a\\|b | c |\n| d | e |"
+    assert clean_markdown(text) == text

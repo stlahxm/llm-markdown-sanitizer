@@ -124,6 +124,8 @@ Blocks that fail any of these are dropped entirely (along with a dangling `Some 
 
 Separately, a table collapsed onto a single line (every row's `|`-boundaries glued together with just whitespace between them) is expanded back into one row per line **before** the validity check above runs.
 
+Cell/column counting splits on `|` characters that are **not** backslash-escaped, so a GFM-valid literal pipe inside a cell (`\|`) doesn't get miscounted as an extra column and drag the whole table into the "dropped as broken" path. A `|` inside inline code (`` `a|b` ``) isn't handled the same way yet — that still triggers the mismatch, since it requires tracking backtick code-span boundaries within a line rather than just an escape character. Tracked in [#5](https://github.com/stlahxm/llm-markdown-sanitizer/issues/5).
+
 ### Protecting your own syntax (`protectPatterns` / `protect_patterns`)
 
 - Caller-supplied regex patterns are matched and fully protected from every pass above, applied in the order given, then restored verbatim.

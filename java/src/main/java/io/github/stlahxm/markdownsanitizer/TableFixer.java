@@ -21,10 +21,20 @@ final class TableFixer {
     private static final Pattern ALIGNMENT_ROW = Pattern.compile("\\|\\s*:?-{3,}:?\\s*\\|");
     private static final Pattern COMPACT_ROW_BOUNDARY = Pattern.compile("\\|\\s+\\|");
     private static final Pattern SEPARATOR_CELL = Pattern.compile("^:?-{3,}:?$");
+    // GFM lets a cell contain a literal `|` if it's backslash-escaped (`\|`).
+    // A naive split on "|" counts that escaped pipe as a real column
+    // boundary, which mismatches the true column count against the header/
+    // separator rows and gets the whole (valid!) table dropped as "broken".
+    // This splits only on pipes NOT preceded by a backslash.
+    private static final Pattern UNESCAPED_PIPE = Pattern.compile("(?<!\\\\)\\|");
 
     private TableFixer() {
     }
 
+    /**
+     * Restores a GFM table that was collapsed onto a single line back into
+     * one line per row.
+     */
     static List<String> expandCompactTableLine(String line) {
         String stripped = line.strip();
         if (!stripped.startsWith("|")) {
@@ -42,6 +52,12 @@ final class TableFixer {
         return List.of(expanded.split("\n", -1));
     }
 
+    /**
+     * Number of {@code |}-delimited cells in a table row. A row that doesn't
+     * start with {@code |} isn't a table row at all, so it counts as 0 --
+     * this lets callers use the count directly as a truthiness/comparison
+     * check without a separate "is this even a table row" branch.
+     */
     private static int cellCount(String line) {
         String stripped = line.strip();
         if (!stripped.startsWith("|")) {
@@ -50,16 +66,21 @@ final class TableFixer {
         if (stripped.endsWith("|")) {
             stripped = stripped.substring(0, stripped.length() - 1);
         }
-        return stripped.split("\\|", -1).length - 1;
+        return UNESCAPED_PIPE.split(stripped, -1).length - 1;
     }
 
+    /**
+     * A GFM separator row is the {@code | --- | --- |}-style line under the
+     * header that declares column alignment -- every cell must be dashes
+     * (optionally with a leading/trailing {@code :} for alignment), nothing else.
+     */
     private static boolean isSeparatorRow(String line) {
         String stripped = line.strip();
         stripped = trimPipes(stripped).strip();
         if (stripped.isEmpty()) {
             return false;
         }
-        String[] cells = stripped.split("\\|", -1);
+        String[] cells = UNESCAPED_PIPE.split(stripped, -1);
         for (String cell : cells) {
             if (!SEPARATOR_CELL.matcher(cell.strip()).matches()) {
                 return false;
@@ -119,11 +140,21 @@ final class TableFixer {
             if (hasSeparator && hasDataRow && columnCountsMatch) {
                 output.addAll(tableBlock);
             } else {
+                // The block gets dropped. Two bits of cosmetic cleanup
+                // around the hole it leaves behind:
                 String previous = output.isEmpty() ? "" : output.get(output.size() - 1).strip();
                 String nextLine = index < lines.size() ? lines.get(index).strip() : "";
                 if (previous.endsWith(":") && (nextLine.isEmpty() || nextLine.startsWith("#"))) {
+                    // e.g. "Here's a table:" immediately introducing the
+                    // dropped block, with nothing (or a new heading) after
+                    // it -- that dangling intro sentence reads as broken on
+                    // its own, so drop it too instead of leaving an
+                    // orphaned colon-ended line.
                     output.remove(output.size() - 1);
                 } else if (blockStart > 0 && !output.isEmpty() && !output.get(output.size() - 1).isEmpty()) {
+                    // Otherwise just leave a blank line where the table
+                    // was, so surrounding paragraphs don't get glued
+                    // together.
                     output.add("");
                 }
             }

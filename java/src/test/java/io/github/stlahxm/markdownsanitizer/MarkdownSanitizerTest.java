@@ -202,4 +202,14 @@ class MarkdownSanitizerTest {
         assertFalse(result.contains("MDSAN"));
         assertEquals("This costs $5 and that one costs $10, so **buy** the cheaper one.", result);
     }
+
+    @Test
+    void tableWithEscapedPipeInACellIsPreserved() {
+        // A cell containing a backslash-escaped pipe (valid GFM: `\|` is a
+        // literal `|`, not a column boundary) used to make that row's cell
+        // count disagree with the header/separator row, so the incomplete-
+        // table remover dropped the entire otherwise-valid table.
+        String text = "| A | B |\n| --- | --- |\n| a\\|b | c |\n| d | e |";
+        assertEquals(text, MarkdownSanitizer.clean(text));
+    }
 }

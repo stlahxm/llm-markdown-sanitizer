@@ -12,6 +12,12 @@ import re
 
 _COMPACT_TABLE_BOUNDARY_RE = re.compile(r"\s*\|\s+\|(?=\s*(?::?-{3,}:?|[^|\s]))")
 _TABLE_SEPARATOR_CELL_RE = re.compile(r"^:?-{3,}:?$")
+# GFM lets a cell contain a literal `|` if it's backslash-escaped (`\|`).
+# A naive `str.split("|")` counts that escaped pipe as a real column
+# boundary, which mismatches the true column count against the header/
+# separator rows and gets the whole (valid!) table dropped as "broken".
+# This regex splits only on pipes NOT preceded by a backslash.
+_UNESCAPED_PIPE_RE = re.compile(r"(?<!\\)\|")
 
 
 def expand_compact_table_line(line: str) -> list[str]:
@@ -31,19 +37,26 @@ def expand_compact_table_line(line: str) -> list[str]:
 
 
 def _cell_count(line: str) -> int:
+    """Number of `|`-delimited cells in a table row. A row that doesn't
+    start with `|` isn't a table row at all, so it counts as 0 -- this lets
+    callers use the count directly as a truthiness/comparison check without
+    a separate "is this even a table row" branch."""
     stripped = line.strip()
     if not stripped.startswith("|"):
         return 0
     if stripped.endswith("|"):
         stripped = stripped[:-1]
-    return len(stripped.split("|")) - 1
+    return len(_UNESCAPED_PIPE_RE.split(stripped)) - 1
 
 
 def _is_separator_row(line: str) -> bool:
+    """A GFM separator row is the `| --- | --- |`-style line under the
+    header that declares column alignment -- every cell must be dashes
+    (optionally with a leading/trailing `:` for alignment), nothing else."""
     stripped = line.strip().strip("|").strip()
     if not stripped:
         return False
-    cells = [cell.strip() for cell in stripped.split("|")]
+    cells = [cell.strip() for cell in _UNESCAPED_PIPE_RE.split(stripped)]
     return bool(cells) and all(_TABLE_SEPARATOR_CELL_RE.match(cell) for cell in cells)
 
 
@@ -86,11 +99,19 @@ def remove_incomplete_tables(lines: list[str], protected_indices: frozenset[int]
         if has_separator and has_data_row and column_counts_match:
             output.extend(table_block)
         else:
+            # The block gets dropped. Two bits of cosmetic cleanup around
+            # the hole it leaves behind:
             previous = output[-1].strip() if output else ""
             next_line = lines[index].strip() if index < len(lines) else ""
             if previous.endswith(":") and (not next_line or next_line.startswith("#")):
+                # e.g. "Here's a table:" immediately introducing the dropped
+                # block, with nothing (or a new heading) after it -- that
+                # dangling intro sentence reads as broken on its own, so
+                # drop it too instead of leaving an orphaned colon-ended line.
                 output.pop()
             elif block_start > 0 and output and output[-1] != "":
+                # Otherwise just leave a blank line where the table was,
+                # so surrounding paragraphs don't get glued together.
                 output.append("")
 
     return output
