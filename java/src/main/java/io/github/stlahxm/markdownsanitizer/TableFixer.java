@@ -68,6 +68,10 @@ final class TableFixer {
         return true;
     }
 
+    private static boolean isTableLine(List<String> lines, int index, java.util.Set<Integer> protectedIndices) {
+        return !protectedIndices.contains(index) && lines.get(index).stripLeading().startsWith("|");
+    }
+
     private static String trimPipes(String value) {
         int start = 0;
         int end = value.length();
@@ -80,12 +84,19 @@ final class TableFixer {
         return value.substring(start, end);
     }
 
-    static List<String> removeIncompleteTables(List<String> lines) {
+    /**
+     * @param protectedIndices line indices that came from inside a code fence
+     *                         (verbatim content) -- these are never grouped into
+     *                         a table block even if they start with {@code |},
+     *                         since they aren't a table at all and must not be
+     *                         altered or dropped.
+     */
+    static List<String> removeIncompleteTables(List<String> lines, java.util.Set<Integer> protectedIndices) {
         List<String> output = new ArrayList<>();
         int index = 0;
 
         while (index < lines.size()) {
-            if (!lines.get(index).stripLeading().startsWith("|")) {
+            if (!isTableLine(lines, index, protectedIndices)) {
                 output.add(lines.get(index));
                 index++;
                 continue;
@@ -93,7 +104,7 @@ final class TableFixer {
 
             int blockStart = index;
             List<String> tableBlock = new ArrayList<>();
-            while (index < lines.size() && lines.get(index).stripLeading().startsWith("|")) {
+            while (index < lines.size() && isTableLine(lines, index, protectedIndices)) {
                 tableBlock.add(lines.get(index));
                 index++;
             }

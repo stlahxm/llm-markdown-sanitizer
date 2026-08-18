@@ -43,6 +43,12 @@ final class EmphasisFixer {
 
             int closeIndex = text.indexOf("**", index + 2);
             if (closeIndex == -1) {
+                // No matching close on this line -- this isn't emphasis at all
+                // (could be Java varargs-adjacent syntax, Python's `**kwargs`
+                // in an embedded code sample, or just a stray typo). Keep the
+                // literal characters instead of silently dropping them; only
+                // complete `**...**` pairs get normalized.
+                output.append("**");
                 index += 2;
                 continue;
             }

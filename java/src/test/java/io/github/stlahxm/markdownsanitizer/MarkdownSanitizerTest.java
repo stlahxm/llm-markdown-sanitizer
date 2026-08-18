@@ -160,4 +160,46 @@ class MarkdownSanitizerTest {
         String text = "**bold**😀text";
         assertEquals(text, MarkdownSanitizer.clean(text));
     }
+
+    @Test
+    void embeddedCodeFenceContentIsNeverTouched() {
+        String text = "Intro text.\n\n"
+                + "```python\n"
+                + "def foo():\n"
+                + "    - this is a code comment, not a list\n"
+                + "    x = {'a': 1}\n"
+                + "```\n\n"
+                + "```\n"
+                + "| not | a | table |\n"
+                + "| just | code | comment |\n"
+                + "```\n\n"
+                + "Outro text.";
+        String result = MarkdownSanitizer.clean(text);
+        assertTrue(result.contains("    - this is a code comment, not a list"));
+        assertTrue(result.contains("| not | a | table |"));
+        assertTrue(result.contains("| just | code | comment |"));
+    }
+
+    @Test
+    void unclosedDoubleAsteriskIsPreservedNotDropped() {
+        String fenced = "```python\ndef foo(**kwargs):\n    return {**kwargs, 'x': 1}\n```";
+        assertTrue(MarkdownSanitizer.clean(fenced).contains("def foo(**kwargs):"));
+        assertTrue(MarkdownSanitizer.clean(fenced).contains("{**kwargs, 'x': 1}"));
+
+        String prose = "Call it like foo(**kwargs) without a closing pair.";
+        assertTrue(MarkdownSanitizer.clean(prose).contains("foo(**kwargs)"));
+    }
+
+    @Test
+    void placeholderNeverLeaksIntoOutputWhenFollowedByADigit() {
+        // A protected math span immediately followed by a literal digit
+        // (e.g. two separate dollar amounts on the same line) used to make
+        // the restore regex's \d+ swallow that trailing digit into the
+        // placeholder's index, producing an out-of-range index and leaking
+        // the raw "MDSAN0_010"-shaped placeholder straight into the output.
+        String text = "This costs $5 and that one costs $10, so**buy**the cheaper one.";
+        String result = MarkdownSanitizer.clean(text);
+        assertFalse(result.contains("MDSAN"));
+        assertEquals("This costs $5 and that one costs $10, so **buy** the cheaper one.", result);
+    }
 }

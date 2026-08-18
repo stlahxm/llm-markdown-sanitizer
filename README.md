@@ -86,6 +86,10 @@ Everything below applies identically to the Python and Java bindings. Processing
 - Only strips a fence that wraps the **entire** input (starts at position 0, after trimming whitespace). Code fences appearing anywhere else in the document — i.e. an actual code sample the model included on purpose — are left alone.
 - Only strips it when the fence's language label is empty, `markdown`, `md`, or `json` (case-insensitive). A ` ```python ` or ` ```java ` fence is real code and is never touched.
 
+### Embedded code fences
+
+Any ` ``` ` fence that isn't the whole-document wrapper (see above) opens a block whose content is passed through **completely untouched** — none of the passes below (bold spacing, list normalization, table repair, `<br>` conversion) run on it, and lines inside it are never mistaken for a table or list even if they start with `-` or `|`. This matters concretely: a Python code sample containing `**kwargs` or a `| not | a | table |` comment used to get corrupted (the `**` silently deleted, or the whole line dropped as a fake broken table) before this protection existed.
+
 ### `<br>` tags
 
 - Matches `<br>`, `<br/>`, `<br />` (case-insensitive, any spacing before the slash).
@@ -106,7 +110,7 @@ Everything below applies identically to the Python and Java bindings. Processing
 - Indentation scale is a flat 2 raw spaces (tabs expanded to 4 spaces) per nesting level, capped at 3 levels deep — this is the CommonMark-minimum nesting indent for a `-` marker (marker width 1 + 1 required space), and also what LLMs converge on in practice. See [`_lists.py`](python/src/llm_markdown_sanitizer/_lists.py) / [`ListFixer.java`](java/src/main/java/io/github/stlahxm/markdownsanitizer/ListFixer.java) for the exact derivation.
 - A heavily indented (4+ spaces) plain-text line immediately following a near-top-level list item is treated as a wrapped continuation of that item and re-indented under it.
 - **Not handled**: ordered lists (`1.`, `2.`, ...) are passed through untouched — this library only normalizes bullet lists.
-- Lines inside a table or a code fence are never touched by list normalization.
+- Lines inside a table row or an embedded code fence are never touched by list normalization.
 
 ### Table repair
 
@@ -133,6 +137,10 @@ Separately, a table collapsed onto a single line (every row's `|`-boundaries glu
 ### Explicitly out of scope
 
 Headings, blockquotes, horizontal rules, inline code spans, links, and images are passed through untouched — they weren't observed as a source of broken LLM output in the production system this library was extracted from, so there was nothing to fix. If you hit a real-world broken-markdown case not covered above, please [open an issue](https://github.com/stlahxm/llm-markdown-sanitizer/issues) with the input that triggered it.
+
+### Known limitation: math-span detection is a heuristic, not a parser
+
+Inline math protection (see "`**bold**` spacing" above) treats *any* `$...$` pair as a math span, since neither `$...$` nor `$$...$$` are part of the CommonMark/GFM spec — they're a convention different renderers interpret differently, so there's no authoritative grammar to parse against. In practice this means a line with two unrelated dollar amounts (`Item costs $5 and $10 total`) is treated as one "math span" spanning both, which is usually harmless — but if a genuine `**bold**` span happens to fall between them on the same line, it won't get its spacing fixed, since the whole region between the two `$` is protected as if it were math. This is a conservative tradeoff (nothing gets corrupted, a rare case just doesn't get fixed) rather than a data-loss bug.
 
 ## Contributing
 

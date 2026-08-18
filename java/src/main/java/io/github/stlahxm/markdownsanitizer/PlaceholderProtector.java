@@ -38,8 +38,17 @@ final class PlaceholderProtector {
 
     static String protectAndRestore(String text, Pattern pattern, Function<String, String> transform) {
         int callId = CALL_COUNTER.getAndIncrement();
-        String tokenPrefix = PREFIX + callId + "_";
-        Pattern placeholderPattern = Pattern.compile(Pattern.quote(tokenPrefix) + "(\\d+)");
+        // The "@@" wrapper is required, not decorative: without an
+        // unambiguous non-digit boundary, a placeholder immediately
+        // followed by a literal digit in the source text (e.g. protecting
+        // "$5...$10" leaves "...MDSAN0_010" once the transform runs) makes
+        // the restore regex's \d+ greedily swallow that trailing digit into
+        // the index, producing an out-of-range index and leaking the raw
+        // placeholder into the output. Found via
+        // clean("costs $5 and $10, so**buy**it") leaking "MDSAN0_010"
+        // verbatim into the result.
+        String tokenPrefix = "@@" + PREFIX + callId + "_";
+        Pattern placeholderPattern = Pattern.compile(Pattern.quote(tokenPrefix) + "(\\d+)@@");
         List<String> segments = new ArrayList<>();
 
         Matcher matcher = pattern.matcher(text);
@@ -47,7 +56,7 @@ final class PlaceholderProtector {
         int lastEnd = 0;
         while (matcher.find()) {
             protectedText.append(text, lastEnd, matcher.start());
-            protectedText.append(tokenPrefix).append(segments.size());
+            protectedText.append(tokenPrefix).append(segments.size()).append("@@");
             segments.add(matcher.group());
             lastEnd = matcher.end();
         }

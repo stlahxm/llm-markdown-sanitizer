@@ -33,11 +33,19 @@ def protect_and_restore(
     """Protect all matches of `pattern` in `text`, run `transform` on the
     rest, then restore the protected spans verbatim."""
     call_id = next(_call_counter)
-    placeholder_re = re.compile(re.escape(f"{_PLACEHOLDER_PREFIX}{call_id}_") + r"(\d+)")
+    # The trailing "@@" terminator is required, not decorative: without an
+    # unambiguous non-digit boundary, a placeholder immediately followed by
+    # a literal digit in the source text (e.g. protecting "$5...$10" leaves
+    # "...MDSAN0_010" once the transform runs) makes the restore regex's
+    # `\d+` greedily swallow that trailing digit into the index, producing
+    # an out-of-range index and leaking the raw placeholder into the output.
+    # Found via clean_markdown("costs $5 and $10, so**buy**it") leaking
+    # "MDSAN0_010" verbatim into the result.
+    placeholder_re = re.compile(re.escape(f"@@{_PLACEHOLDER_PREFIX}{call_id}_") + r"(\d+)@@")
     segments: list[str] = []
 
     def _replace(match: re.Match[str]) -> str:
-        token = f"{_PLACEHOLDER_PREFIX}{call_id}_{len(segments)}"
+        token = f"@@{_PLACEHOLDER_PREFIX}{call_id}_{len(segments)}@@"
         segments.append(match.group(0))
         return token
 

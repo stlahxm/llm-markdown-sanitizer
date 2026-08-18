@@ -50,15 +50,39 @@ def _clean_lines(text: str) -> str:
     # because that formula happened to be a fixed point at 4 spaces — but
     # became a real bug (indentation doubling on every pass) once the scale
     # was fixed to be consistently 2-spaces-per-level. See issue #1.
+    #
+    # Lines inside an *embedded* code fence (one that isn't the whole-document
+    # wrapper already stripped above) are passed through completely untouched
+    # and marked as protected, so remove_incomplete_tables() below never mistakes
+    # e.g. a `| not | a | table |` code comment for a real table. Without this,
+    # code samples containing list markers or pipe characters were being
+    # silently corrupted -- see issue #2.
     cleaned_lines: list[str] = []
+    protected_indices: set[int] = set()
+    in_code_fence = False
+
     for line in text.splitlines():
+        is_fence_marker = line.strip().startswith("```")
+
+        if in_code_fence:
+            protected_indices.add(len(cleaned_lines))
+            cleaned_lines.append(line)
+            if is_fence_marker:
+                in_code_fence = False
+            continue
+
+        if is_fence_marker:
+            in_code_fence = True
+            cleaned_lines.append(line)
+            continue
+
         line = _convert_br_tags_outside_tables(line)
         line = normalize_emphasis_boundaries(line)
         for expanded_line in expand_compact_table_line(line):
             normalized = normalize_list_line(expanded_line, cleaned_lines[-1] if cleaned_lines else "")
             cleaned_lines.append(normalized)
 
-    cleaned_lines = remove_incomplete_tables(cleaned_lines)
+    cleaned_lines = remove_incomplete_tables(cleaned_lines, frozenset(protected_indices))
     return "\n".join(cleaned_lines).strip()
 
 

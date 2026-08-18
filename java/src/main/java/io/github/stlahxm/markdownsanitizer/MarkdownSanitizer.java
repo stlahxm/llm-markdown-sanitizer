@@ -108,10 +108,36 @@ public final class MarkdownSanitizer {
         // under a buggy indent-scale formula that happened to be a fixed
         // point, but would double indentation on every pass under the
         // corrected formula used here. Only call it once, after expansion.
-        StringBuilder result = new StringBuilder();
+        //
+        // Lines inside an *embedded* code fence (one that isn't the whole-
+        // document wrapper already stripped above) are passed through
+        // completely untouched and marked as protected, so
+        // removeIncompleteTables() below never mistakes e.g. a
+        // `| not | a | table |` code comment for a real table. Without this,
+        // code samples containing list markers or pipe characters were being
+        // silently corrupted.
         List<String> cleanedLines = new java.util.ArrayList<>();
+        java.util.Set<Integer> protectedIndices = new java.util.HashSet<>();
+        boolean inCodeFence = false;
 
         for (String rawLine : text.split("\n", -1)) {
+            boolean isFenceMarker = rawLine.strip().startsWith("```");
+
+            if (inCodeFence) {
+                protectedIndices.add(cleanedLines.size());
+                cleanedLines.add(rawLine);
+                if (isFenceMarker) {
+                    inCodeFence = false;
+                }
+                continue;
+            }
+
+            if (isFenceMarker) {
+                inCodeFence = true;
+                cleanedLines.add(rawLine);
+                continue;
+            }
+
             String line = convertBrTagsOutsideTables(rawLine);
             line = EmphasisFixer.normalizeBoundaries(line);
             for (String expandedLine : TableFixer.expandCompactTableLine(line)) {
@@ -120,8 +146,9 @@ public final class MarkdownSanitizer {
             }
         }
 
-        cleanedLines = TableFixer.removeIncompleteTables(cleanedLines);
+        cleanedLines = TableFixer.removeIncompleteTables(cleanedLines, protectedIndices);
 
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < cleanedLines.size(); i++) {
             if (i > 0) {
                 result.append('\n');

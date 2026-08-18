@@ -47,22 +47,31 @@ def _is_separator_row(line: str) -> bool:
     return bool(cells) and all(_TABLE_SEPARATOR_CELL_RE.match(cell) for cell in cells)
 
 
-def remove_incomplete_tables(lines: list[str]) -> list[str]:
+def remove_incomplete_tables(lines: list[str], protected_indices: frozenset[int] = frozenset()) -> list[str]:
     """Drop table-like blocks that don't actually form a valid GFM table
     (missing separator row, mismatched column counts, or fewer than 2 data
-    rows) instead of letting them render as broken markdown."""
+    rows) instead of letting them render as broken markdown.
+
+    `protected_indices` marks line indices that came from inside a code
+    fence (verbatim content) -- those are never grouped into a table block
+    even if they happen to start with `|`, since they aren't a table at all
+    and must not be altered or dropped.
+    """
     output: list[str] = []
     index = 0
 
+    def _is_table_line(i: int) -> bool:
+        return i not in protected_indices and lines[i].lstrip().startswith("|")
+
     while index < len(lines):
-        if not lines[index].lstrip().startswith("|"):
+        if not _is_table_line(index):
             output.append(lines[index])
             index += 1
             continue
 
         block_start = index
         table_block: list[str] = []
-        while index < len(lines) and lines[index].lstrip().startswith("|"):
+        while index < len(lines) and _is_table_line(index):
             table_block.append(lines[index])
             index += 1
 

@@ -30,6 +30,11 @@ def _normalize_emphasis_tokens(text: str) -> str:
 
         close_index = text.find("**", index + 2)
         if close_index == -1:
+            # No matching close on this line -- this isn't emphasis at all
+            # (could be Python's `**kwargs`, a dict-unpacking `**`, or just a
+            # stray typo). Keep the literal characters instead of silently
+            # dropping them; only complete `**...**` pairs get normalized.
+            output.append("**")
             index += 2
             continue
 
