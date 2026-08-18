@@ -42,3 +42,4 @@ cd java && gradle build
 - Add a test that fails before the change and passes after it.
 - If the fix originates from a real LLM output that broke, use an anonymized version of that input as the test case rather than a synthetic one — the test suites are meant to encode observed failure modes.
 - Note in the PR/commit whether the equivalent fix is still needed in the other language.
+- **File an issue for every bug fix, no exceptions** — including ones found and fixed in the same sitting during a review, with no external report. If the fix is already done by the time the issue is filed, file it anyway and close it referencing the fix commit. Don't fold a bug's discovery/root-cause/fix into a commit message alone; the issue is the record that a human (or a future agent) can find later.

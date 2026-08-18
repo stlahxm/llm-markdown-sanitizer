@@ -13,8 +13,8 @@ A bug fix or behavior change should generally be ported to both, since they're m
 
 ## Before you start
 
-- For a bug fix or small improvement, open a PR directly — no need to file an issue first.
-- For anything that changes the public API's signature, return type, or default behavior, please open an issue first so the approach can be agreed on before implementation.
+- Every bug fix needs a corresponding issue, even a self-found one fixed in the same sitting. File it before or alongside the PR — a short title, the input that broke, expected vs. actual output, and root cause once known. If the fix is already done, file the issue and close it referencing the fix; the issue is the paper trail, not a gate to wait on.
+- For anything that changes the public API's signature, return type, or default behavior, open an issue first so the approach can be agreed on before implementation.
 - Check open issues/PRs first to avoid duplicate work.
 
 ## Project constraints (both languages)
