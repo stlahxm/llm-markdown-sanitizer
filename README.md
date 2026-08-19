@@ -59,9 +59,9 @@ Update your client before upgrading.
         - Backward compatible for 30 days
 - Rate limiting
 
-| Endpoint | Change|
-| --- | ---|
-| /login | New response shape|
+| Endpoint | Change |
+| --- | --- |
+| /login | New response shape |
 | /refresh | Deprecated |
 
 
@@ -71,6 +71,10 @@ See the **migration guide** for details. Example: `git commit -m "fix bug"`
 The broken second table (no separator row) is dropped entirely rather than rendered as a wall of `|`. Everything else is repaired in place, with no configuration required.
 
 Extracted from the markdown-cleanup layer of a production RAG service, after months of hardening against real LLM output. Available for both Python and Java, sharing the same behavior and test fixtures.
+
+**[Try it live in your browser](https://stlahxm.github.io/llm-markdown-sanitizer/)** — runs the real PyPI package via Pyodide, no install needed.
+
+<img width="2162" height="1504" alt="PR" src="https://github.com/user-attachments/assets/581a599f-7b5a-44aa-9ec7-073c9411bc88" />
 
 ## Install & use
 
