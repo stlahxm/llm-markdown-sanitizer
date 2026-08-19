@@ -13,7 +13,7 @@ requires-python = ">=3.9"
 authors = [
     { name = "Halu" }
 ]
-keywords = ["markdown", "llm", "sanitizer", "rag", "text-processing"]
+keywords = ["markdown", "llm", "llm-output", "chatgpt", "gpt", "sanitizer", "rag", "text-processing"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",

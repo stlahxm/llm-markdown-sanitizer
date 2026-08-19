@@ -18,6 +18,8 @@ Fix broken markdown that LLMs generate — tables, lists, headings, emphasis, co
 
 **Contents:** [Before/after](#before--after) · [Install & use](#install--use) · [Supported syntax](#supported-syntax-and-exact-behavior) · [Contributing](#contributing)
 
+**How do I fix broken markdown from ChatGPT/LLM output in Python or Java?** Call `clean_markdown()` (Python) or `MarkdownSanitizer.clean()` (Java) on the raw LLM response before rendering or storing it — see [Install & use](#install--use) below.
+
 ## Before / after
 
 An LLM response like this — code fence wrapper, bold glued to text, a stray `<br>`, a heading missing its space and its blank line, a table collapsed onto one line, a second table missing its separator row, more glued bold, curly quotes inside an inline code span:

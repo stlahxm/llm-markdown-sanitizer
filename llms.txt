@@ -1,0 +1,31 @@
+# llm-markdown-sanitizer
+
+> A zero-dependency library that fixes markdown that LLMs commonly generate incorrectly, before it's rendered or stored. One function/method call: `clean_markdown()` in Python, `MarkdownSanitizer.clean()` in Java.
+
+Use this when: an LLM/ChatGPT/Claude response is rendered as markdown and something breaks — bold text glued onto the next word, a stray ```markdown fence wrapping the whole response (or left unclosed), tables collapsed onto one line or missing a separator row, a `|` inside a table cell miscounted as a column, a heading missing its space, curly quotes inside a code sample, inconsistent list indentation.
+
+## Docs
+
+- [README (overview, before/after examples, full feature list)](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/README.md)
+- [Python package (PyPI)](https://pypi.org/project/llm-markdown-sanitizer/)
+- [Python README](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/python/README.md)
+- [Java package (JitPack)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
+- [Java README](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/java/README.md)
+- [Issue tracker (known limitations and fixed bugs, each with root cause)](https://github.com/stlahxm/llm-markdown-sanitizer/issues)
+- [Contributing guide](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/CONTRIBUTING.md)
+
+## Quick usage
+
+Python:
+```python
+from llm_markdown_sanitizer import clean_markdown
+clean_markdown("**Note**this needs a space")
+# "**Note** this needs a space"
+```
+
+Java:
+```java
+import io.github.stlahxm.markdownsanitizer.MarkdownSanitizer;
+MarkdownSanitizer.clean("**Note**this needs a space");
+// "**Note** this needs a space"
+```
