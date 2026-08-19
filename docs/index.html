@@ -60,6 +60,13 @@
     flex-direction: column;
     overflow: hidden;
   }
+  .panel.flash {
+    animation: flash-glow 0.6s ease-out;
+  }
+  @keyframes flash-glow {
+    0% { border-color: var(--ok); box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.35); }
+    100% { border-color: var(--border); box-shadow: none; }
+  }
   .panel-title {
     padding: 8px 12px;
     font-size: 0.8rem;
@@ -187,7 +194,7 @@ async function boot() {
     runBtn.disabled = false;
     exampleBtn.disabled = false;
     input.value = EXAMPLE;
-    run();
+    output.textContent = "← click \"Run clean_markdown()\" to see the result";
   } catch (err) {
     statusEl.textContent = "Failed to load: " + err;
   }
@@ -195,18 +202,23 @@ async function boot() {
 
 function run() {
   if (!cleanMarkdown) return;
+  const panel = output.closest(".panel");
   try {
     output.textContent = cleanMarkdown(input.value);
   } catch (err) {
     output.textContent = "Error: " + err;
   }
+  panel.classList.remove("flash");
+  // force reflow so the animation restarts on repeated clicks
+  void panel.offsetWidth;
+  panel.classList.add("flash");
 }
 
 runBtn.addEventListener("click", run);
 exampleBtn.addEventListener("click", () => { input.value = EXAMPLE; run(); });
 input.addEventListener("input", () => {
   clearTimeout(window._t);
-  window._t = setTimeout(run, 300);
+  window._t = setTimeout(run, 500);
 });
 
 boot();
