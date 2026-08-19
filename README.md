@@ -76,8 +76,6 @@ Extracted from the markdown-cleanup layer of a production RAG service, after mon
 
 **[Try it live in your browser](https://stlahxm.github.io/llm-markdown-sanitizer/)** — runs the real PyPI package via Pyodide, no install needed.
 
-<img width="2162" height="1504" alt="PR" src="https://github.com/user-attachments/assets/581a599f-7b5a-44aa-9ec7-073c9411bc88" />
-
 ## Install & use
 
 ### Python
