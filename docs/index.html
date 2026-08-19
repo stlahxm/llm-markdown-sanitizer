@@ -150,25 +150,24 @@
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <script>
-const EXAMPLE = `#이차전지 요약
+const EXAMPLE = `#Battery Basics
 
-**이차전지**는 화학 에너지를 전기로 바꾸는 장치임.**리튬이온전지**가 대표적인 예시임.
-1991년 Sony가 최초로 상용화함.
+**Lithium-ion batteries**are rechargeable.**Lead-acid batteries**came first, back in 1859.
 
-전지 비교
+Battery comparison
 
-| 종류 | 용량 | 특징 |
+| Type | Capacity | Notes |
 | --- | --- | --- |
-| 리튬이온 | 최대 3842mAh | 에너지 밀도 높음, 화재 위험 있음 |
-| 납축전지 | 300Ah | 저렴하지만 무거움 |
+| Lithium-ion | up to 3842mAh | high energy density, fire risk |
+| Lead-acid | 300Ah | cheap but heavy |
 
-에너지 계산 공식: E = V x I x t 로 구한다.
+Energy formula: E = V x I x t.
 
-주요 반응식:
+Discharge reaction:
 \`\`\`python
 def discharge(voltage, current, time):
     return voltage * current * time
-- 리튬이온전지는 흑연을 음극재로 사용함
+- Lithium-ion cells use graphite as the anode
 `;
 
 const statusEl = document.getElementById("status");
