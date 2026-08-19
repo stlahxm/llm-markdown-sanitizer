@@ -20,6 +20,7 @@ Each side has one module per concern, same split on both languages:
 | Table repair | `_tables.py` | `TableFixer.java` |
 | Blank-line/heading-space spacing fixes | `_spacing.py` | `SpacingFixer.java` |
 | Smart-quote normalization in code | `_quotes.py` | `QuoteFixer.java` |
+| CLI entry point (Python only, for pre-commit/tooling) | `__main__.py` | — |
 
 A behavior change made in one should generally be ported to the other. When fixing a bug, check whether the equivalent code exists in both `python/src/llm_markdown_sanitizer/` and `java/src/main/java/io/github/stlahxm/markdownsanitizer/` before considering the fix complete.
 

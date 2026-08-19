@@ -127,6 +127,24 @@ import re
 clean_markdown(text, protect_patterns=[re.compile(r"\[\[.*?\]\]")])
 ```
 
+## CLI / pre-commit
+
+There's also a thin CLI wrapper around `clean_markdown()`, for tooling that expects a runnable command rather than a library import:
+
+```bash
+python -m llm_markdown_sanitizer file1.md file2.md
+```
+
+Rewrites each file in place and prints the ones it changed. To run it automatically before every commit, add this repo as a [pre-commit](https://pre-commit.com/) hook (requires `pip install llm-markdown-sanitizer` in the environment pre-commit runs in):
+
+```yaml
+repos:
+  - repo: https://github.com/stlahxm/llm-markdown-sanitizer
+    rev: python-v0.2.4
+    hooks:
+      - id: llm-markdown-sanitizer
+```
+
 ## Origin
 
 Extracted from the markdown-cleanup layer of a production RAG service, after months of hardening against real LLM output. The domain-specific parts — a custom wiki syntax, a Korean-language note pattern — were removed in favor of the general `protect_patterns` mechanism above, so callers can supply their own domain syntax instead.

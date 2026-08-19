@@ -1,0 +1,12 @@
+- id: llm-markdown-sanitizer
+  name: llm-markdown-sanitizer
+  description: >-
+    Fix markdown that LLMs commonly generate incorrectly (glued bold,
+    unclosed fences, broken tables, etc.). Requires `llm-markdown-sanitizer`
+    to already be installed in the environment pre-commit runs in
+    (`pip install llm-markdown-sanitizer`) -- this repo is a monorepo
+    without a root-level pyproject.toml, so `language: python`'s usual
+    auto-managed venv install can't work here.
+  entry: python -m llm_markdown_sanitizer
+  language: system
+  types: [markdown]
