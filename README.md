@@ -9,6 +9,9 @@
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![Java 17+](https://img.shields.io/badge/java-17%2B-orange)
 
+<img width="2162" height="1504" alt="PR" src="https://github.com/user-attachments/assets/581a599f-7b5a-44aa-9ec7-073c9411bc88" />
+
+
 Fix broken markdown that LLMs generate — tables, lists, headings, emphasis, code fences, quotes. Zero dependencies, one function/method.
 
 - **Two language bindings, one behavior** — Python and Java share the same logic and the same test fixtures.
