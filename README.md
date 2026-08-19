@@ -97,7 +97,7 @@ clean_markdown("**Note**this needs a space")
 
 ### Java
 
-[![JitPack](https://jitpack.io/v/stlahxm/llm-markdown-sanitizer.svg)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
+[![JitPack](https://img.shields.io/github/v/tag/stlahxm/llm-markdown-sanitizer?filter=java-v*&label=jitpack)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
 
 `build.gradle.kts`:
 ```kotlin

@@ -1,6 +1,6 @@
 # llm-markdown-sanitizer (Java)
 
-[![JitPack](https://jitpack.io/v/stlahxm/llm-markdown-sanitizer.svg)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
+[![JitPack](https://img.shields.io/github/v/tag/stlahxm/llm-markdown-sanitizer?filter=java-v*&label=jitpack)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
 [![CI](https://img.shields.io/github/actions/workflow/status/stlahxm/llm-markdown-sanitizer/java-ci.yml?branch=main)](https://github.com/stlahxm/llm-markdown-sanitizer/actions/workflows/java-ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/stlahxm/llm-markdown-sanitizer/blob/main/LICENSE)
 
