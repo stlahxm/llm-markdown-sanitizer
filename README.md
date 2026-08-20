@@ -9,6 +9,8 @@
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![Java 17+](https://img.shields.io/badge/java-17%2B-orange)
 
+<img width="2162" height="1504" alt="PR" src="https://github.com/user-attachments/assets/66106d50-b832-4d99-931e-0f5b7058e365" />
+
 Fix broken markdown that LLMs generate — tables, lists, headings, emphasis, code fences, quotes. Zero dependencies, one function/method.
 
 - **Two language bindings, one behavior** — Python and Java share the same logic and the same test fixtures.
@@ -73,8 +75,6 @@ The broken second table (no separator row) is dropped entirely rather than rende
 Extracted from the markdown-cleanup layer of a production RAG service, after months of hardening against real LLM output. Available for both Python and Java, sharing the same behavior and test fixtures.
 
 **[Try it live in your browser](https://stlahxm.github.io/llm-markdown-sanitizer/)** — runs the real PyPI package via Pyodide, no install needed.
-
-<img width="2162" height="1504" alt="PR" src="https://github.com/user-attachments/assets/66106d50-b832-4d99-931e-0f5b7058e365" />
 
 ## Install & use
 
