@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/python"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/java"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
