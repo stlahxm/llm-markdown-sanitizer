@@ -21,7 +21,7 @@ jobs:
           distribution: temurin
           java-version: "17"
       - run: gradle build jacocoTestReport
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: java/build/reports/jacoco/test/jacocoTestReport.xml
