@@ -23,4 +23,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"
-      - run: pytest -v
+      - run: pytest -v --cov=llm_markdown_sanitizer --cov-report=xml
+      - uses: codecov/codecov-action@v5
+        if: matrix.python-version == '3.12'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: python/coverage.xml
+          flags: python

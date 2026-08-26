@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
+    jacoco
 }
 
 group = "com.github.stlahxm"
@@ -25,6 +26,14 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+    }
 }
 
 // Zero runtime dependencies is a hard project constraint -- fail the build
