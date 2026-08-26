@@ -5,6 +5,7 @@
 [![PyPI](https://img.shields.io/pypi/v/llm-markdown-sanitizer?label=pypi)](https://pypi.org/project/llm-markdown-sanitizer/)
 [![JitPack](https://img.shields.io/github/v/tag/stlahxm/llm-markdown-sanitizer?filter=java-v*&label=jitpack)](https://jitpack.io/#stlahxm/llm-markdown-sanitizer)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![codecov](https://codecov.io/gh/stlahxm/llm-markdown-sanitizer/branch/main/graph/badge.svg)](https://codecov.io/gh/stlahxm/llm-markdown-sanitizer)
 ![Zero dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![Java 17+](https://img.shields.io/badge/java-17%2B-orange)
