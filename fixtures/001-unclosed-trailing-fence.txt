@@ -1,0 +1,10 @@
+@@@INPUT@@@
+Some text
+```python
+def f(): pass
+@@@EXPECTED@@@
+Some text
+```python
+def f(): pass
+```
+@@@END@@@

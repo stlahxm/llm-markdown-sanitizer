@@ -3,9 +3,9 @@ name: Python CI
 on:
   push:
     branches: [main]
-    paths: ["python/**", ".github/workflows/python-ci.yml"]
+    paths: ["python/**", "fixtures/**", ".github/workflows/python-ci.yml"]
   pull_request:
-    paths: ["python/**", ".github/workflows/python-ci.yml"]
+    paths: ["python/**", "fixtures/**", ".github/workflows/python-ci.yml"]
 
 defaults:
   run:
