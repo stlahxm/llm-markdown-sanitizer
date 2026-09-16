@@ -1,0 +1,5 @@
+@@@INPUT@@@
+~~deprecated~~use the new API instead
+@@@EXPECTED@@@
+~~deprecated~~ use the new API instead
+@@@END@@@

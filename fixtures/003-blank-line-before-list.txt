@@ -1,0 +1,10 @@
+@@@INPUT@@@
+Here are the steps:
+- First
+- Second
+@@@EXPECTED@@@
+Here are the steps:
+
+- First
+- Second
+@@@END@@@

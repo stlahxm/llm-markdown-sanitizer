@@ -109,4 +109,12 @@ class CommonLlmBugsTest {
         String text = "Some text\n```python\ndef f(): pass\n```\nMore text";
         assertEquals(text, MarkdownSanitizer.clean(text));
     }
+
+    // --- Strikethrough glued to surrounding text ---
+
+    @Test
+    void strikethroughGluedToSurroundingTextGetsSpaced() {
+        assertEquals("~~deprecated~~ use the new API instead",
+                MarkdownSanitizer.clean("~~deprecated~~use the new API instead"));
+    }
 }

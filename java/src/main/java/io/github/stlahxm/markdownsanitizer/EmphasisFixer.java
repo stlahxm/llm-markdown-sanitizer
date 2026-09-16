@@ -7,9 +7,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Fixes {@code **bold**} (and {@code ***bold italic***}) spans that LLMs
- * glue directly onto surrounding words, e.g.
- * {@code **Note**this breaks rendering} -&gt;
+ * Fixes {@code **bold**} ({@code ***bold italic***}, and
+ * {@code ~~strikethrough~~}) spans that LLMs glue directly onto
+ * surrounding words, e.g. {@code **Note**this breaks rendering} -&gt;
  * {@code **Note** this breaks rendering}.
  *
  * <p>Protects inline math spans ({@code $...$} / {@code $$...$$}) from
@@ -93,7 +93,9 @@ final class EmphasisFixer {
      * is checked before {@code **} since it's the longer marker and
      * {@code **} is a prefix of it -- checking in the other order would
      * always match the {@code **} case first and never recognize a triple
-     * asterisk. Returns {@code null} if neither starts here.
+     * asterisk. {@code ~~} (GFM strikethrough) is a disjoint marker
+     * character, so its check order relative to the others doesn't
+     * matter. Returns {@code null} if none starts here.
      */
     private static String markerAt(String text, int index) {
         if (text.startsWith("***", index)) {
@@ -101,6 +103,9 @@ final class EmphasisFixer {
         }
         if (text.startsWith("**", index)) {
             return "**";
+        }
+        if (text.startsWith("~~", index)) {
+            return "~~";
         }
         return null;
     }

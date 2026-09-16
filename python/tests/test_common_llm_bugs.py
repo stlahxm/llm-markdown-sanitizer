@@ -94,3 +94,11 @@ def test_unclosed_trailing_fence_gets_auto_closed():
 def test_properly_closed_fence_is_not_touched():
     text = "Some text\n```python\ndef f(): pass\n```\nMore text"
     assert clean_markdown(text) == text
+
+
+# --- Strikethrough glued to surrounding text (same gluing problem already
+# fixed for ** and ***, but ~~ wasn't recognized as an emphasis marker) ---
+
+
+def test_strikethrough_glued_to_surrounding_text_gets_spaced():
+    assert clean_markdown("~~deprecated~~use the new API instead") == "~~deprecated~~ use the new API instead"

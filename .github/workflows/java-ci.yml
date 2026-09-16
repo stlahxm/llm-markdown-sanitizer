@@ -3,9 +3,9 @@ name: Java CI
 on:
   push:
     branches: [main]
-    paths: ["java/**", ".github/workflows/java-ci.yml"]
+    paths: ["java/**", "fixtures/**", ".github/workflows/java-ci.yml"]
   pull_request:
-    paths: ["java/**", ".github/workflows/java-ci.yml"]
+    paths: ["java/**", "fixtures/**", ".github/workflows/java-ci.yml"]
 
 defaults:
   run:

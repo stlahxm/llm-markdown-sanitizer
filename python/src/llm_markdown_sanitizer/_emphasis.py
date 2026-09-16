@@ -1,6 +1,6 @@
-"""Fix `**bold**` (and `***bold italic***`) spans that LLMs glue directly
-onto surrounding words, e.g. `**Note**this breaks rendering` ->
-`**Note** this breaks rendering`.
+"""Fix `**bold**` (`***bold italic***`, and `~~strikethrough~~`) spans that
+LLMs glue directly onto surrounding words, e.g. `**Note**this breaks
+rendering` -> `**Note** this breaks rendering`.
 
 Also protects inline math spans (`$...$` / `$$...$$`) from being touched,
 since `**`/`***` can legitimately appear inside LaTeX there.
@@ -47,11 +47,15 @@ def _marker_at(text: str, index: int) -> str | None:
     """Which emphasis marker (if any) starts at `index`. `***` is checked
     before `**` since it's the longer marker and `**` is a prefix of it --
     checking in the other order would always match the `**` case first and
-    never recognize a triple asterisk."""
+    never recognize a triple asterisk. `~~` (GFM strikethrough) is a
+    disjoint marker character, so its check order relative to the others
+    doesn't matter."""
     if text.startswith("***", index):
         return "***"
     if text.startswith("**", index):
         return "**"
+    if text.startswith("~~", index):
+        return "~~"
     return None
 
 
